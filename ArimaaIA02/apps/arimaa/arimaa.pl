@@ -1,7 +1,8 @@
 :- module(bot,
       [  get_moves/3
       ]).
-	
+
+:- include('externalTools.pl').
 % A few comments but all is explained in README of github
 
 % get_moves signature
