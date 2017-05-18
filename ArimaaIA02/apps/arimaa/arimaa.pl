@@ -1,63 +1,124 @@
-:- module(bot,
-      [  get_moves/3
-      ]).
+% :- module(bot,
+%       [  get_moves/3
+%       ]).
 
 :- include('externalTools.pl').
 :- include('internalTools.pl').
+:- include('print.pl').
 
-% PrintBoard
-initialBoard([
-             [(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2)],
-             [(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1)],
-             [(0, e),(0, e),(2, t),(0, e),(0, e),(0, t),(0, e),(0, e)],
-             [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
-             [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
-             [(0, e),(0, e),(0, t),(0, e),(0, e),(0, t),(0, e),(0, e)],
-             [(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1)],
-             [(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2)]
-            ]).
-
-% Write a separator on N cases
-wSep(0) :- !.
-wSep(N) :- write("_"), Tmp is N-1, wSep(Tmp).
-
-% Write a separator with new line
-% K is number of lines
-% N is numbers of cases separator
-multipleWSep(0,_) :- !.
-multipleWSep(K, N) :- wSep(N), nl, SK is K - 1, multipleWSep(SK, N).
-% write a tabulation (2 espaces)
-wTab :- write("  ").
-
-
-/*On vérifie si les pions sont placés du bon côté */
-checkInitPlacement(Board, silver,(X,Y)) :-
-  Y > 0, Y < 9, X > 0, X < 3.
-  % cell(Board, X, Y, (cellType, e)). TO BE DONE
-checkInitPlacement(Board, silver,_):-
-  nl, multipleWSep(2, 60),
-	nl, writeln("Coordonnees invalides, elles doivent etre comprises entre (1,1) et (2,8)"), fail.
-checkInitPlacement(Board, gold, (X,Y)) :-
-  Y > 0, Y < 9, X > 6, X < 9.
-  %cell(Board, X, Y, (cellType, e)). TO BE DONE
-checkInitPlacement(Board, gold,_):-
-  nl, multipleWSep(2, 60),
-	nl, writeln("Coordonnees invalides, elles doivent etre comprises entre (7,1) et (8,8)"), fail.
-
-
-  /*
-	cell(X,Y, Board, Res)
+/*
+	setBrd(Tab)
 	------------------------------
-	Unifie Res avec le tuple présent dans le plateau
-	aux coordonnées (X,Y)
+	Modifie le prédicat dynamique du tableau
+	Teste d'abord le retract si il y existe déjà un fait
+	Sinon, il l'ajoute.
 */
-cell(X, Y, Board, Res) :-
-	rowFromBrd(X, Board, RowRes),
-	cellFromRow(Y, RowRes, Res).
-rowFromBrd(1, [X|_], X) :- !.
-rowFromBrd(R,[_|Q], Res) :- R2 is R-1, rowFromBrd(R2, Q, Res).
-cellFromRow(1, [X|_], X) :- !.
-cellFromRow(R, [_|Q], Res) :- R2 is R-1, cellFromRow(R2, Q, Res).
+setBrd(Brd) :-
+	retractall(board(_)),
+	assertz(board(Brd)), !.
+setBrd(Brd) :-
+	assertz(board(Brd)).
+
+
+/*
+	============================================================
+	============================================================
+	Positionnement des pions sur le plateau
+  						[[(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2)],
+               [(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1)],
+               [(0, e),(0, e),(0 , t),(0, e),(0, e),(0, t),(0, e),(0, e)],
+               [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
+               [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
+               [(0, e),(0, e),(0, t),(0, e),(0, e),(0, t),(0, e),(0, e)],
+               [(eG, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1)],
+               [(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2)]]
+	============================================================
+	============================================================
+*/
+
+/*
+	positioningPhase
+	------------------------------
+	Starting initialization of all
+	pieces at the beginning of the game
+*/
+positioningPhase(Brd, ResBrd) :-
+	nl, nl, writeMultSep(3, 60),
+	wTab, write("Pieces placement, GOLD side"), nl,
+	playerPositioning(Brd, gold, SubBrd),
+	nl, nl, writeMultSep(3, 60),
+	wTab, write("Pieces placement SILVER side"), nl,
+	%playerPositioning(SubBrd, silver, ResBrd),
+	nl, writeMultSep(4, 60),
+	nl, writeln("Plateau de depart : "),
+	showBrd(ResBrd), !.
+
+/*
+	playerPositioning
+	------------------------------
+	Start positioning gold and silver side
+	Unifies result with ResBrd.
+*/
+playerPositioning(Brd, gold, ResBrd) :-
+	humanPositioningMenu(Brd, [elephant, camel, horse, horse, dog, dog, cat, cat, rabbit, rabbit, rabbit, rabbit, rabbit, rabbit, rabbit, rabbit], gold, ResBrd).
+playerPositioning(Brd, silver, ResBrd) :-
+	iaPositioningMenu(Brd, [elephant, camel, horse, horse, dog, dog, cat, cat, rabbit, rabbit, rabbit, rabbit, rabbit, rabbit, rabbit, rabbit], silver, ResBrd).
+
+/*
+	humanPositioningMenu
+	------------------------------
+	Lance le positionnement humain du joueur
+	du camp PlayerSide
+	Unifie le résultat du positionnement avec ResBrd.
+*/
+humanPositioningMenu(_, [], _, _).
+humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
+	repeat, nl, writeSep(20), nl,
+	showBrd(Brd),
+	write(" [Player "), write(PlayerSide), write("] => Position of "),
+	write(T), nl, write("Write position in this format : (X,Y) "), nl,
+	read(CHOICE),checkValidPosition(Brd, PlayerSide, CHOICE),
+	pieceDenomination(PlayerSide, T, TypePion),
+	cellType((X,Y), Brd, TypeCell),
+	setCell(Brd, (TypePion, TypeCell), CHOICE, SubBrd),
+	humanPositioningMenu(SubBrd, Q, PlayerSide, ResBrd).
+
+
+/*
+	iaPositioningMenu
+	------------------------------
+	Lance le positionnement IA du joueur
+	du camp PlayerSide
+	Unifie le résultat du positionnement avec ResBrd.
+*/
+iaPositioningMenu(Brd, 7, PlayerSide, Brd) :-
+	nl, write("Positionnement de l'IA du camp "), writeln(PlayerSide),
+	showBrd(Brd), !.
+iaPositioningMenu(Brd, 6, PlayerSide, ResBrd) :-
+	repeat, generateRandomStartPosition(PlayerSide, (X,Y)),
+	cell(X,Y, Brd, (CellPower,empty)),
+	pieceDenomination(PlayerSide, kalista, Type),
+	setCell(Brd, (CellPower, Type), (X,Y), SubBrd),
+	iaPositioningMenu(SubBrd, 7, PlayerSide, ResBrd).
+iaPositioningMenu(Brd, N, PlayerSide, ResBrd) :-
+	repeat, generateRandomStartPosition(PlayerSide, (X,Y)),
+	cell(X,Y, Brd, (CellPower,empty)),
+	M is N+1,
+	pieceDenomination(PlayerSide, sbire, Type),
+	setCell(Brd, (CellPower, Type), (X,Y), SubBrd),
+	iaPositioningMenu(SubBrd, M, PlayerSide, ResBrd).
+
+
+/*
+	generateRandomStartPosition
+	------------------------------
+	Génére des coordonnées aléatoires pour
+	le placement des pions pour l'IA
+*/
+generateRandomStartPosition(ocre, (X,Y)) :-
+	random(1,3,X), random(1,7,Y).
+generateRandomStartPosition(rouge, (X,Y)) :-
+	random(5,7,X), random(1,7,Y).
 
 
 
