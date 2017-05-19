@@ -84,13 +84,8 @@ checkValidPosition(Brd, silver, (X,Y)) :-
 	cell((X, Y), Brd, (0,_)), !.
 % cell is not empty
 checkValidPosition(_, silver, (X,Y)) :-
-	X >= 1, X =< 2, Y >= 1, Y =< 8,
-	nl, writeMultSep(2, 60),
-	writeln("Cell is already taken !"), !, fail.
-% invalid positions
-checkValidPosition(_, silver,_) :-
-	nl, writeMultSep(2, 60),
-	nl, writeln("Invalid positions, must be between (1,1) and (2,8)"), fail.
+	X >= 1, X =< 2, Y >= 1, Y =< 8, !, fail.
+
 % --------- GOLD side case
 checkValidPosition(Brd, gold, (X, Y)) :-
 	X >= 7, X =< 8, Y >= 1, Y =< 8,

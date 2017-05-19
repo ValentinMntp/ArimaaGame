@@ -30,7 +30,7 @@ setBrd(Brd) :-
                [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
                [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
                [(0, e),(0, e),(0, t),(0, e),(0, e),(0, t),(0, e),(0, e)],
-               [(eG, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1)],
+               [(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1),(0, g1)],
                [(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2),(0, g2)]]
 	============================================================
 	============================================================
@@ -48,7 +48,7 @@ positioningPhase(Brd, ResBrd) :-
 	playerPositioning(Brd, gold, SubBrd),
 	nl, nl, writeMultSep(3, 60),
 	wTab, write("Pieces placement SILVER side"), nl,
-	%playerPositioning(SubBrd, silver, ResBrd),
+	playerPositioning(SubBrd, silver, ResBrd),
 	nl, writeMultSep(4, 60),
 	nl, writeln("Plateau de depart : "),
 	showBrd(ResBrd), !.
@@ -67,11 +67,11 @@ playerPositioning(Brd, silver, ResBrd) :-
 /*
 	humanPositioningMenu
 	------------------------------
-	Lance le positionnement humain du joueur
-	du camp PlayerSide
+		Lance le positionnement humain du joueur
+		du camp PlayerSide
 	Unifie le résultat du positionnement avec ResBrd.
 */
-humanPositioningMenu(_, [], _, _).
+humanPositioningMenu(Brd, [], _, Brd) :- showBrd(Brd).
 humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	repeat, nl, writeSep(20), nl,
 	showBrd(Brd),
@@ -91,22 +91,15 @@ humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	du camp PlayerSide
 	Unifie le résultat du positionnement avec ResBrd.
 */
-iaPositioningMenu(Brd, 7, PlayerSide, Brd) :-
-	nl, write("Positionnement de l'IA du camp "), writeln(PlayerSide),
-	showBrd(Brd), !.
-iaPositioningMenu(Brd, 6, PlayerSide, ResBrd) :-
-	repeat, generateRandomStartPosition(PlayerSide, (X,Y)),
-	cell(X,Y, Brd, (CellPower,empty)),
-	pieceDenomination(PlayerSide, kalista, Type),
-	setCell(Brd, (CellPower, Type), (X,Y), SubBrd),
-	iaPositioningMenu(SubBrd, 7, PlayerSide, ResBrd).
-iaPositioningMenu(Brd, N, PlayerSide, ResBrd) :-
-	repeat, generateRandomStartPosition(PlayerSide, (X,Y)),
-	cell(X,Y, Brd, (CellPower,empty)),
-	M is N+1,
-	pieceDenomination(PlayerSide, sbire, Type),
-	setCell(Brd, (CellPower, Type), (X,Y), SubBrd),
-	iaPositioningMenu(SubBrd, M, PlayerSide, ResBrd).
+iaPositioningMenu(Brd, [], PlayerSide, Brd) :-
+	nl, write("AI initialization"), showBrd(Brd), !.
+iaPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
+	repeat, generateRandomStartPosition(X,Y),
+	checkValidPosition(Brd, PlayerSide,(X,Y)),
+	pieceDenomination(PlayerSide, T, TypePion),
+	cellType((X,Y), Brd, TypeCell),
+	setCell(Brd, (TypePion, TypeCell), (X,Y), SubBrd),
+	iaPositioningMenu(SubBrd, Q, PlayerSide, ResBrd).
 
 
 /*
@@ -115,10 +108,8 @@ iaPositioningMenu(Brd, N, PlayerSide, ResBrd) :-
 	Génére des coordonnées aléatoires pour
 	le placement des pions pour l'IA
 */
-generateRandomStartPosition(ocre, (X,Y)) :-
-	random(1,3,X), random(1,7,Y).
-generateRandomStartPosition(rouge, (X,Y)) :-
-	random(5,7,X), random(1,7,Y).
+generateRandomStartPosition(X,Y) :- random(1,3,X), random(1,9,Y).
+
 
 
 
