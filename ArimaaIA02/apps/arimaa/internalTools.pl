@@ -124,6 +124,9 @@ cellType((X,Y), Brd, Res) :-
 rowToCellType(1, [(X,Y)|_], Y) :- !.
 rowToCellType(R, [_|Q], Res) :- R2 is R-1, rowToCellType(R2, Q, Res).
 
+
+
+
 setCell([X|Q], Cell, (1,J), [SubRes|Q]) :-
 	setRowCell(X, Cell, J, SubRes), !.
 setCell([T|Q], Cell, (I,J), [T|SubRes]) :-
