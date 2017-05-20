@@ -118,47 +118,37 @@ checkValidPosition(_, gold,_) :-
 */
 
 % --------- Gold just made the move
-checkWinLoseConditions(Brd, Gold) :-
-    checkSilverInGoldSide,
-    checkGoldInSilverSide,
+checkWinningConditions(Brd, gold) :-
+    checkSilverInGoldSide(Brd),
+    checkGoldInSilverSide(Brd),
     checkGoldRabbits,
     checkSilverRabbits,
     checkSilverMove.
 
 % --------- Silver just made the move
-checkWinLoseConditions(Brd, Silver) :-
-    checkSilverInGoldSide,
-    checkGoldInSilverSide,
+checkWinningConditions(Brd, silver) :-
+    checkSilverInGoldSide(Brd),
+    checkGoldInSilverSide(Brd),
     checkGoldRabbits,
     checkSilverRabbits,
     checkGoldMove.
 
 %  Check if a rabbit of Silver reached goal. If so Silver wins.
 
-/*
-inverse(Brd, BrdInv).
-
-checkSilverInGoldSide([[6,0,_,_]|Q]).
-
-checkSilverInGoldSide(BrdInv) :-
-    checkSilverInGoldSide(Q),
-    T = [_,_,rabbit,Silver],
+checkSilverInGoldSide(Brd) :-
+    brdToRow(8, Brd, Row),
+    element((rS,g2), Row),
     nl, writeMultSep(2, 60),
     nl, writeln("Silver is the winner").
-*/
 
 
 %  Check if a rabbit of Gold reached goal. If so Gold wins.
 
 checkGoldInSilverSide(Brd):-
-    brdToRow(1, Brd, row),
-    checkRabbitGold(row).
-
-checkRabbitGold([T|Q]):-
-    T=(rG,s2),
+    brdToRow(1, Brd, Row),
+    element((rG,s2), Row),
     nl, writeMultSep(2, 60),
-    nl, writeln("Gold is the winner"),
-    checkRabbitGold(Q).
+    nl, writeln("Gold is the winner").
 
 
 
