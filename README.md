@@ -19,6 +19,9 @@ The server is now running
 3. You can then access to the game in any browser via: [http://localhost:3030](http://localhost:3030)
 In the interface you play the gold (bottom) color and you IA is the silver color (top)
 
+### Arimaa game Rules
+You can find the official rules of this game here: http://arimaa.com/arimaa/learn/rulesIntro.html
+
 ### Code your IA
 The ONLY file you have to touch to code your IA is ArimaaIA02\apps\arimaa\arimaa.pl
 1. Update ArimaaIA02\apps\arimaa\arimaa.pl

@@ -55,6 +55,16 @@ concat(L, [], L) :- !.
 concat([T|Q], L2, [T|Res]) :- concat(Q, L2, Res).
 
 /*
+    inverse (Liste , ListeInverse)
+    ------------------------------
+    Prédicat qui unifie ListeInverse
+    avec l'inverse de la liste passé en paramètre
+*/
+inverse([T|Q], Qr) :- inverse(Q, I), concat(I, [T], Qr).
+inverse([],[]).
+
+
+/*
 	retire_elements(X, L1, L2)
 	------------------------------
 	Prédicat qui déplace dans L2 TOUTES les occurences de l'élément X dans L

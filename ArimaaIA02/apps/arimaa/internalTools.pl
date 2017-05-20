@@ -82,6 +82,7 @@ pieceDenomination(gold, rabbit, rG).
 checkValidPosition(Brd, silver, (X,Y)) :-
 	X >=1, X =< 2, Y >= 1, Y =< 8,
 	cell((X, Y), Brd, (0,_)), !.
+
 % cell is not empty
 checkValidPosition(_, silver, (X,Y)) :-
 	X >= 1, X =< 2, Y >= 1, Y =< 8, !, fail.
@@ -90,15 +91,76 @@ checkValidPosition(_, silver, (X,Y)) :-
 checkValidPosition(Brd, gold, (X, Y)) :-
 	X >= 7, X =< 8, Y >= 1, Y =< 8,
 	cell((X, Y), Brd, (0,_)), !.
+
 % Cas où la cellule n'est pas vide
 checkValidPosition(_, gold, (X, Y)) :-
 	X >= 7, X =< 8, Y >= 1, Y =< 8,
 	nl, writeMultSep(2, 60),
 	nl, write("Cell is already taken !"), !, fail.
+
 % Cas où les coordonnées ne sont pas valides.
 checkValidPosition(_, gold,_) :-
 	nl, writeMultSep(2, 60),
 	nl, writeln("Invalid positions, must be between (7,1) and (8,8)"), fail.
+
+
+/* checkWinLoseConditions(Brd)
+    ------------------------------
+    Check if there is a Winner after a round
+    The order of checking for win/lose conditions is as follows assuming Silver just made the move and Gold now needs to move:
+
+    Check if a rabbit of Silver reached goal. If so Silver wins.
+    Check if a rabbit of Gold reached goal. If so Gold wins.
+    Check if Silver lost all rabbits. If so Gold wins.
+    Check if Gold lost all rabbits. If so Silver wins.
+    Check if Gold has no possible move (all pieces are frozen or have no place to move). If so Silver wins.
+    Check if the only moves Gold has are 3rd time repetitions. If so Silver wins.    /// -> see later \\\
+*/
+
+% --------- Gold just made the move
+checkWinLoseConditions(Brd, Gold) :-
+    checkSilverInGoldSide,
+    checkGoldInSilverSide,
+    checkGoldRabbits,
+    checkSilverRabbits,
+    checkSilverMove.
+
+% --------- Silver just made the move
+checkWinLoseConditions(Brd, Silver) :-
+    checkSilverInGoldSide,
+    checkGoldInSilverSide,
+    checkGoldRabbits,
+    checkSilverRabbits,
+    checkGoldMove.
+
+%  Check if a rabbit of Silver reached goal. If so Silver wins.
+
+/*
+inverse(Brd, BrdInv).
+
+checkSilverInGoldSide([[6,0,_,_]|Q]).
+
+checkSilverInGoldSide(BrdInv) :-
+    checkSilverInGoldSide(Q),
+    T = [_,_,rabbit,Silver],
+    nl, writeMultSep(2, 60),
+    nl, writeln("Silver is the winner").
+*/
+
+
+%  Check if a rabbit of Gold reached goal. If so Gold wins.
+
+checkGoldInSilverSide(Brd):-
+    brdToRow(1, Brd, row),
+    checkRabbitGold(row).
+
+checkRabbitGold([T|Q]):-
+    T=(rG,s2),
+    nl, writeMultSep(2, 60),
+    nl, writeln("Gold is the winner"),
+    checkRabbitGold(Q).
+
+
 
 /*
   cell(X,Y, Brd, Res)
