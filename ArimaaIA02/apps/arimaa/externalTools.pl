@@ -41,7 +41,7 @@ vide([]).
 	Prédicat qui retourne VRAI si :
 	un élément X (argument 1) est présent dans la liste L (argument 2)
 */
-element(X, [X|_]).
+element(X, [X|_]) :- !.
 element(X, [_|Q]) :- element(X,Q).
 
 /*

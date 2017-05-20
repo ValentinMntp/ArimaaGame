@@ -30,14 +30,14 @@ startGame :- writeMultSep(3,40), write("Hi human !"), nl,
 round(_) :-
 	checkWinningConditions(Brd, silver), !,
 	nl, writeMultSep(3,60), nl,
-	write("AI wins ! It seems to be too strong for you !").
+	write("AI wins ! It seems to be too strong for you !"),
 	nl, writeMultSep(3,60), nl.
 
 % Check if gold wins
 round(_) :-
 	checkWinningConditions(Brd, gold), !,
 	nl, writeMultSep(3,60), nl,
-	write("You win ! AI has been defeated... Congratulations !").
+	write("You win ! AI has been defeated... Congratulations !"),
 	nl, writeMultSep(3,60), nl.
 
 % otherwise, play round
@@ -48,9 +48,9 @@ round(PlayerColor) :-
 	enemyColor(PlayerColor, EnnemyColor),
 	round(EnnemyColor).
 
-doRound(Brd, gold) :-.
+doRound(Brd, gold).
 
-doRound(Brd, silver) :-.
+doRound(Brd, silver).
 
 
 % get_moves signature
