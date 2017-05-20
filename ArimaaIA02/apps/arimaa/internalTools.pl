@@ -12,7 +12,7 @@
   /*
   	stronger(X,Y)
   	------------------------------
-  	Checj if X is stronger than Y
+  	Check if X is stronger than Y
   */
 
 beat(elephant, camel).
