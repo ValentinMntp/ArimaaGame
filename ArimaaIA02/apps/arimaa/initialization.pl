@@ -84,7 +84,7 @@ humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	du camp PlayerSide
 	Unifie le résultat du positionnement avec ResBrd.
 */
-iaPositioningMenu(Brd, [], PlayerSide, Brd) :-
+iaPositioningMenu(Brd, [],_, Brd) :-
 	nl, write("AI initialization"), showBrd(Brd), !.
 iaPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	repeat, generateRandomStartPosition(X,Y),

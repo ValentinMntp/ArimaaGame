@@ -139,7 +139,7 @@ checkSilverInGoldSide(Brd) :-
     brdToRow(8, Brd, Row),
     element((rS,g2), Row),
     nl, writeMultSep(2, 60),
-    nl, writeln("Silver is the winner").
+    nl, writeln("AI wins ! It seems to be too strong for you mate...").
 
 
 %  Check if a rabbit of Gold reached goal. If so Gold wins.
@@ -148,7 +148,7 @@ checkGoldInSilverSide(Brd):-
     brdToRow(1, Brd, Row),
     element((rG,s2), Row),
     nl, writeMultSep(2, 60),
-    nl, writeln("Gold is the winner").
+    nl, writeln("You did it ! You beated the AI ! Congrats bro !").
 
 
 
@@ -173,7 +173,7 @@ rowToCell(R, [_|Q], Res) :- R2 is R-1, rowToCell(R2, Q, Res).
 cellType((X,Y), Brd, Res) :-
 	brdToRow(X, Brd, RowRes),
 	rowToCellType(Y, RowRes, Res).
-rowToCellType(1, [(X,Y)|_], Y) :- !.
+rowToCellType(1, [(_,Y)|_], Y) :- !.
 rowToCellType(R, [_|Q], Res) :- R2 is R-1, rowToCellType(R2, Q, Res).
 
 
