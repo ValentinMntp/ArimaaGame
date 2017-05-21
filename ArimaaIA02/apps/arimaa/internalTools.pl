@@ -118,28 +118,29 @@ checkValidPosition(_, gold,_) :-
 */
 
 % --------- Gold just made the move
-checkWinningConditions(Brd, gold) :-
+/*checkWinningConditions(Brd, gold) :-
     checkSilverInGoldSide(Brd),
     checkGoldInSilverSide(Brd),
-    checkGoldRabbits,
-    checkSilverRabbits,
+    checkGoldRabbits(Brd),
+    checkSilverRabbits(Brd),
     checkSilverMove.
+*/
 
 % --------- Silver just made the move
 checkWinningConditions(Brd, silver) :-
     checkSilverInGoldSide(Brd),
     checkGoldInSilverSide(Brd),
-    checkGoldRabbits,
-    checkSilverRabbits,
+    checkGoldRabbits(Brd),
+    checkSilverRabbits(Brd),
     checkGoldMove.
 
 %  Check if a rabbit of Silver reached goal. If so Silver wins.
 
-checkSilverInGoldSide(Brd) :-
+checkSilverInGoldSide(Brd):-
     brdToRow(8, Brd, Row),
     element((rS,g2), Row),
     nl, writeMultSep(2, 60),
-    nl, writeln("Silver is the winner").
+    nl, writeln("Silver is the winner"), !.
 
 
 %  Check if a rabbit of Gold reached goal. If so Gold wins.
@@ -148,7 +149,52 @@ checkGoldInSilverSide(Brd):-
     brdToRow(1, Brd, Row),
     element((rG,s2), Row),
     nl, writeMultSep(2, 60),
+    nl, writeln("Gold is the winner"), !.
+
+
+%  Check if Silver lost all rabbits. If so Gold wins.
+checkSilverRabbits(Brd):-
+    brdToRow(1, Brd, Row),
+    \+element((rS,_), Row),
+    brdToRow(2, Brd, Row2),
+    \+element((rS,_), Row2),
+    brdToRow(3, Brd, Row3),
+    \+element((rS,_), Row3),
+    brdToRow(4, Brd, Row4),
+    \+element((rS,_), Row4),
+    brdToRow(5, Brd, Row5),
+    \+element((rS,_), Row5),
+    brdToRow(6, Brd, Row6),
+    \+element((rS,_), Row6),
+    brdToRow(7, Brd, Row7),
+    \+element((rS,_), Row7),
+    brdToRow(8, Brd, Row8),
+    \+element((rS,_), Row8),
+    nl, writeMultSep(2, 60),
     nl, writeln("Gold is the winner").
+
+%  Check if Gold lost all rabbits. If so Silver wins.
+checkSilverRabbits(Brd):-
+    brdToRow(1, Brd, Row),
+    \+element((rG,_), Row),
+    brdToRow(2, Brd, Row2),
+    \+element((rG,_), Row2),
+    brdToRow(3, Brd, Row3),
+    \+element((rG,_), Row3),
+    brdToRow(4, Brd, Row4),
+    \+element((rG,_), Row4),
+    brdToRow(5, Brd, Row5),
+    \+element((rG,_), Row5),
+    brdToRow(6, Brd, Row6),
+    \+element((rG,_), Row6),
+    brdToRow(7, Brd, Row7),
+    \+element((rG,_), Row7),
+    brdToRow(8, Brd, Row8),
+    \+element((rG,_), Row8),
+    nl, writeMultSep(2, 60),
+    nl, writeln("Gold is the winner").
+
+
 
 
 
