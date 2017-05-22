@@ -257,9 +257,9 @@ checkRabbitInGoal(Brd, gold):-
 */
 isFrozen((X,Y), Brd) :-
 	getNeighbours((X,Y),Brd,L),
-	hasFriend((X,Y),L),
-	hasStrongerOpponent((X,Y),L).
-
+	cell((X,Y), Brd, (Piece,_)),
+	hasNoFriend(Piece,L),
+	hasStrongerOpponent(Piece,L), !.
 
 getNeighbours((X,Y),Brd,Res) :-
 	X > 1, X < 7, Y > 1, Y < 7,
@@ -289,48 +289,17 @@ getNeighbours((X,Y),Brd,Res) :-
 	concat([PieceGauche],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res).
 
-/*
-  hasNoFriend(Piece, Brd)
-  ------------------------------
-	Check if Piece has no friendly piece next to it.
-*/
-hasFriend((X,Y), ) :-
-	cell((X,Y), Brd, (Piece,_)),
-	pieceToColor(Piece, Color),
-	cell((X+1, Y), Brd, (PieceBasse, _)),
-	\+pieceToColor(PieceBasse, Color),
-	Xbis is X-1,
-	cell((Xbis, Y), Brd, (PieceHaute, _)),
-	\+pieceToColor(PieceHaute, Color),
-	cell((X,Y+1), Brd, (PieceDroite, _)),
-	\+pieceToColor(PieceDroite, Color),
-	Ybis is Y-1,
-	cell((X,Ybis), Brd, (PieceGauche, _)),
-	\+pieceToColor(PieceGauche, Color).
 
+hasNoFriend(_,[]) :- !.
+hasNoFriend(Piece, [T|Q]) :-
+	!, pieceToColor(Piece, Color),
+	\+pieceToColor(T, Color),
+	hasNoFriend(Piece, Q).
 
-hasStrongerOpponent((X,Y), Brd) :-
-	cell((X,Y), Brd, (Piece,_)),
-	pieceDenomination(FriendColor, FriendDenomination, Piece),
-	ennemyColor(FriendColor, EnnemyColor),
-	cell((X+1, Y), Brd, (PieceBasse, _)),
-	(  pieceDenomination(EnnemyColor, BasseDenomination, PieceBasse), stronger(BasseDenomination, FriendDenomination)
-  -> true
-  ;  cell((X+1, Y), Brd, (PieceBasse, _)),
-		(pieceDenomination(EnnemyColor, BasseDenomination, PieceBasse), stronger(BasseDenomination, FriendDenomination)
-		-> true
-		; Xbis is X-1, cell((Xbis, Y), Brd, (PieceHaute, _)),
-			( pieceDenomination(EnnemyColor, HauteDenomination, PieceHaute), stronger(HauteDenomination, FriendDenomination)
-			-> true
-			; cell((X, Y+1), Brd, (PieceDroite, _)),
-				(pieceDenomination(EnnemyColor, DroiteDenomination, PieceDroite), stronger(DroiteDenomination, FriendDenomination)
-				-> true
-				;Ybis is Y-1, cell((X, Ybis), Brd, (PieceGauche, _)),
-					(pieceDenomination(EnnemyColor, GaucheDenomination, PieceGauche), stronger(GaucheDenomination, FriendDenomination)
-					-> true
-					; false
-					)
-				)
-			)
-		)
-  ).
+hasStrongerOpponent(_,[]) :- fail.
+hasStrongerOpponent(Piece, L) :-
+	pieceDenomination(Color, PieceDenomination, Piece),
+	ennemyColor(Color, EnnemyColor),
+	stronger(EnnemyDenomination, PieceDenomination),
+	pieceDenomination(EnnemyColor, EnnemyDenomination, X),
+	element(X,L),!.
