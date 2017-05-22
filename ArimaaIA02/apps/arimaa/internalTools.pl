@@ -30,8 +30,8 @@ stronger(X,Y) :- beat(X,Z), stronger(Z,Y).
   	------------------------------
   	Given X, give the enemy color Y.
   */
-enemyColor(gold, silver).
-enemyColor(silver, gold).
+ennemyColor(gold, silver).
+ennemyColor(silver, gold).
 
 /*
 	pieceToColor(PieceType, PlayerSide)
@@ -92,112 +92,16 @@ checkValidPosition(Brd, gold, (X, Y)) :-
 	X >= 7, X =< 8, Y >= 1, Y =< 8,
 	cell((X, Y), Brd, (0,_)), !.
 
-% Cas où la cellule n'est pas vide
+% Cell is not empty
 checkValidPosition(_, gold, (X, Y)) :-
 	X >= 7, X =< 8, Y >= 1, Y =< 8,
 	nl, writeMultSep(2, 60),
 	nl, write("Cell is already taken !"), !, fail.
 
-% Cas où les coordonnées ne sont pas valides.
+% Invalid positions
 checkValidPosition(_, gold,_) :-
 	nl, writeMultSep(2, 60),
 	nl, writeln("Invalid positions, must be between (7,1) and (8,8)"), fail.
-
-
-/* checkWinLoseConditions(Brd)
-    ------------------------------
-    Check if there is a Winner after a round
-    The order of checking for win/lose conditions is as follows assuming Silver just made the move and Gold now needs to move:
-
-    Check if a rabbit of Silver reached goal. If so Silver wins.
-    Check if a rabbit of Gold reached goal. If so Gold wins.
-    Check if Silver lost all rabbits. If so Gold wins.
-    Check if Gold lost all rabbits. If so Silver wins.
-    Check if Gold has no possible move (all pieces are frozen or have no place to move). If so Silver wins.
-    Check if the only moves Gold has are 3rd time repetitions. If so Silver wins.    /// -> see later \\\
-*/
-
-% --------- Gold just made the move
-/*checkWinningConditions(Brd, gold) :-
-    checkSilverInGoldSide(Brd),
-    checkGoldInSilverSide(Brd),
-    checkGoldRabbits(Brd),
-    checkSilverRabbits(Brd),
-    checkSilverMove.
-*/
-
-% --------- Silver just made the move
-checkWinningConditions(Brd, silver) :-
-    checkSilverInGoldSide(Brd),
-    checkGoldInSilverSide(Brd),
-    checkGoldRabbits(Brd),
-    checkSilverRabbits(Brd),
-    checkGoldMove.
-
-%  Check if a rabbit of Silver reached goal. If so Silver wins.
-
-checkSilverInGoldSide(Brd):-
-    brdToRow(8, Brd, Row),
-    element((rS,g2), Row),
-    nl, writeMultSep(2, 60),
-    nl, writeln("AI wins ! It seems to be too strong for you mate...").
-
-
-
-%  Check if a rabbit of Gold reached goal. If so Gold wins.
-
-checkGoldInSilverSide(Brd):-
-    brdToRow(1, Brd, Row),
-    element((rG,s2), Row),
-    nl, writeMultSep(2, 60),
-    nl, writeln("You did it ! You beated the AI ! Congrats bro !").
-
-
-
-%  Check if Silver lost all rabbits. If so Gold wins.
-checkSilverRabbits(Brd):-
-    brdToRow(1, Brd, Row),
-    \+element((rS,_), Row),
-    brdToRow(2, Brd, Row2),
-    \+element((rS,_), Row2),
-    brdToRow(3, Brd, Row3),
-    \+element((rS,_), Row3),
-    brdToRow(4, Brd, Row4),
-    \+element((rS,_), Row4),
-    brdToRow(5, Brd, Row5),
-    \+element((rS,_), Row5),
-    brdToRow(6, Brd, Row6),
-    \+element((rS,_), Row6),
-    brdToRow(7, Brd, Row7),
-    \+element((rS,_), Row7),
-    brdToRow(8, Brd, Row8),
-    \+element((rS,_), Row8),
-    nl, writeMultSep(2, 60),
-    nl, writeln("Gold is the winner").
-
-%  Check if Gold lost all rabbits. If so Silver wins.
-checkSilverRabbits(Brd):-
-    brdToRow(1, Brd, Row),
-    \+element((rG,_), Row),
-    brdToRow(2, Brd, Row2),
-    \+element((rG,_), Row2),
-    brdToRow(3, Brd, Row3),
-    \+element((rG,_), Row3),
-    brdToRow(4, Brd, Row4),
-    \+element((rG,_), Row4),
-    brdToRow(5, Brd, Row5),
-    \+element((rG,_), Row5),
-    brdToRow(6, Brd, Row6),
-    \+element((rG,_), Row6),
-    brdToRow(7, Brd, Row7),
-    \+element((rG,_), Row7),
-    brdToRow(8, Brd, Row8),
-    \+element((rG,_), Row8),
-    nl, writeMultSep(2, 60),
-    nl, writeln("Gold is the winner").
-
-
-
 
 
 /*
@@ -237,3 +141,167 @@ setRowCell([_|Q], Cell, 1, [Cell|Q]) :- !.
 setRowCell([T|Q], Cell, J, [T|SubRow]) :-
 	SubJ is J - 1,
 	setRowCell(Q, Cell, SubJ, SubRow), !.
+
+
+
+
+
+	/* checkWinLoseConditions(Brd)
+	    ------------------------------
+	    Check if there is a Winner after a round
+	    The order of checking for win/lose conditions is as follows assuming Silver just made the move and Gold now needs to move:
+
+	    Check if a rabbit of Silver reached goal. If so Silver wins.
+	    Check if a rabbit of Gold reached goal. If so Gold wins.
+	    Check if Silver lost all rabbits. If so Gold wins.
+	    Check if Gold lost all rabbits. If so Silver wins.
+	    Check if Gold has no possible move (all pieces are frozen or have no place to move). If so Silver wins.
+	    Check if the only moves Gold has are 3rd time repetitions. If so Silver wins.    /// -> see later \\\
+	*/
+
+	% --------- Gold just made the move
+	/*checkWinningConditions(Brd, gold) :-
+	    checkSilverInGoldSide(Brd),
+	    checkGoldInSilverSide(Brd),
+	    checkGoldRabbits(Brd),
+	    checkSilverRabbits(Brd),
+	    checkSilverMove.
+	*/
+
+	% --------- Silver just made the move
+	checkWinningConditions(Brd, silver) :-
+	    checkRabbitInGoal(Brd, silver),
+	    checkRabbitInGoal(Brd, gold),
+	    checkGoldRabbits(Brd),
+	    checkSilverRabbits(Brd),
+	    checkGoldMove.
+
+
+%  Check if a rabbit of Silver reached goal. If so Silver wins.
+checkRabbitInGoal(Brd, silver):-
+    brdToRow(8, Brd, Row),
+    element((rS,g2), Row),
+    nl, writeMultSep(2, 60),
+    nl, writeln("AI wins ! It seems to be too strong for you mate...").
+%  Check if a rabbit of Gold reached goal. If so Gold wins.
+
+checkRabbitInGoal(Brd, gold):-
+    brdToRow(1, Brd, Row),
+    element((rG,s2), Row),
+    nl, writeMultSep(2, 60),
+    nl, writeln("You did it ! You beated the AI ! Congrats bro !").
+
+
+/*
+  checkSilverRabbits(Brd)
+  ------------------------------
+	Check if Silver lost all rabbits. If so Gold wins.
+*/
+	checkSilverRabbits(Brd):-
+	    brdToRow(1, Brd, Row),
+	    \+element((rS,_), Row),
+	    brdToRow(2, Brd, Row2),
+	    \+element((rS,_), Row2),
+	    brdToRow(3, Brd, Row3),
+	    \+element((rS,_), Row3),
+	    brdToRow(4, Brd, Row4),
+	    \+element((rS,_), Row4),
+	    brdToRow(5, Brd, Row5),
+	    \+element((rS,_), Row5),
+	    brdToRow(6, Brd, Row6),
+	    \+element((rS,_), Row6),
+	    brdToRow(7, Brd, Row7),
+	    \+element((rS,_), Row7),
+	    brdToRow(8, Brd, Row8),
+	    \+element((rS,_), Row8),
+	    nl, writeMultSep(2, 60),
+	    nl, writeln("Gold is the winner").
+
+/*
+  checkGoldRabbits(Brd)
+  ------------------------------
+	Check if Gold lost all rabbits. If so Silver wins.
+*/
+	checkGoldRabbits(Brd):-
+	    brdToRow(1, Brd, Row),
+	    \+element((rG,_), Row),
+	    brdToRow(2, Brd, Row2),
+	    \+element((rG,_), Row2),
+	    brdToRow(3, Brd, Row3),
+	    \+element((rG,_), Row3),
+	    brdToRow(4, Brd, Row4),
+	    \+element((rG,_), Row4),
+	    brdToRow(5, Brd, Row5),
+	    \+element((rG,_), Row5),
+	    brdToRow(6, Brd, Row6),
+	    \+element((rG,_), Row6),
+	    brdToRow(7, Brd, Row7),
+	    \+element((rG,_), Row7),
+	    brdToRow(8, Brd, Row8),
+	    \+element((rG,_), Row8),
+	    nl, writeMultSep(2, 60),
+	    nl, writeln("Silver is the winner").
+
+
+/*
+	A stronger piece can also freeze any opponent's piece that is weaker than it.
+	A piece which is next to an opponent's stronger piece is considered to be frozen
+	and cannot move on its own; though it can be pushed or pulled by opponents stronger pieces.
+	However if there is a friendly piece next to it the piece is unfrozen and is free to move.
+*/
+
+/*
+  isFrozen(Piece, Brd)
+  ------------------------------
+	Check if Piece is frozen (can't be moved).
+*/
+isFrozen((X,Y), Brd) :-
+	hasNoFriend((X,Y),Brd),
+	hasStrongerOpponent((X,Y), Brd).
+
+
+/*
+  hasNoFriend(Piece, Brd)
+  ------------------------------
+	Check if Piece has no friendly piece next to it.
+*/
+% hasNoFriend((X,Y), Brd) :-
+% 	cell((X,Y), Brd, (Piece,_)),
+% 	pieceToColor(Piece, Color),
+% 	cell((X+1, Y), Brd, (PieceBasse, _)),
+% 	\+pieceToColor(PieceBasse, Color),
+% 	Xbis is X-1,
+% 	cell((Xbis, Y), Brd, (PieceHaute, _)),
+% 	\+pieceToColor(PieceHaute, Color),
+% 	cell((X,Y+1), Brd, (PieceDroite, _)),
+% 	\+pieceToColor(PieceDroite, Color),
+% 	Ybis is Y-1,
+% 	cell((X,Ybis), Brd, (PieceGauche, _)),
+% 	\+pieceToColor(PieceGauche, Color).
+%
+%
+% hasStrongerOpponent((X,Y), Brd) :-
+% 	cell((X,Y), Brd, (Piece,_)),
+% 	pieceDenomination(FriendColor, FriendDenomination, Piece),
+% 	ennemyColor(FriendColor, EnnemyColor),
+% 	cell((X+1, Y), Brd, (PieceBasse, _)),
+% 	(  pieceDenomination(EnnemyColor, BasseDenomination, PieceBasse), stronger(BasseDenomination, FriendDenomination)
+%   -> true
+%   ;  cell((X+1, Y), Brd, (PieceBasse, _)),
+% 		(pieceDenomination(EnnemyColor, BasseDenomination, PieceBasse), stronger(BasseDenomination, FriendDenomination)
+% 		-> true
+% 		; Xbis is X-1, cell((Xbis, Y), Brd, (PieceHaute, _)),
+% 			( pieceDenomination(EnnemyColor, HauteDenomination, PieceHaute), stronger(HauteDenomination, FriendDenomination)
+% 			-> true
+% 			; cell((X, Y+1), Brd, (PieceDroite, _)),
+% 				(pieceDenomination(EnnemyColor, DroiteDenomination, PieceDroite), stronger(DroiteDenomination, FriendDenomination)
+% 				-> true
+% 				;Ybis is Y-1, cell((X, Ybis), Brd, (PieceGauche, _)),
+% 					(pieceDenomination(EnnemyColor, GaucheDenomination, PieceGauche), stronger(GaucheDenomination, FriendDenomination)
+% 					-> true
+% 					; false
+% 					)
+% 				)
+% 			)
+% 		)
+%   ).

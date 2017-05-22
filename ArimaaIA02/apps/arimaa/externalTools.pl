@@ -100,3 +100,11 @@ difference([_|Q], L2, Res) :- difference(Q, L2, Res), !.
 */
 longueur([], 0).
 longueur([_|Q], Res) :- longueur(Q, Tmp), Res is Tmp + 1.
+
+
+
+max(X,Y,Z) :-
+  (  X =< Y
+  -> Z = Y
+  ;  Z = X
+   ).

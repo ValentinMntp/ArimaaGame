@@ -39,10 +39,18 @@ round(PlayerColor) :-
 	enemyColor(PlayerColor, EnnemyColor),
 	round(EnnemyColor).
 
-doRound(Brd, gold).
+doRound(Brd, gold) :-
+  askMovePlayer(Brd, PieceChoice, CellChoice),
+  authorizedPiece(PieceChoice).
 
 doRound(Brd, silver).
 
+
+askMovePlayer(Brd, PieceChoice, CellChoice) :-
+  write("Choose the piece to move [Answer with format X,Y.]"), nl,
+  read(PieceChoice),
+  write("Choose cell where you want to move iMovet [Answer with format X,Y.]"), nl,
+  read(CellChoice).
 
 % get_moves signature
 % get_moves(Moves, gamestate, board).
