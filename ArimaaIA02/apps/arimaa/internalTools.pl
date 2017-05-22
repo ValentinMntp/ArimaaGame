@@ -256,52 +256,81 @@ checkRabbitInGoal(Brd, gold):-
 	Check if Piece is frozen (can't be moved).
 */
 isFrozen((X,Y), Brd) :-
-	hasNoFriend((X,Y),Brd),
-	hasStrongerOpponent((X,Y), Brd).
+	getNeighbours((X,Y),Brd,L),
+	hasFriend((X,Y),L),
+	hasStrongerOpponent((X,Y),L).
 
+
+getNeighbours((X,Y),Brd,Res) :-
+	X > 1, X < 7, Y > 1, Y < 7,
+	cell((X+1, Y), Brd, (PieceBasse, _)),
+	concat([PieceBasse],[], SubSubSubRes),
+	Xbis is X-1,
+	cell((Xbis, Y), Brd, (PieceHaute, _)),
+	concat([PieceHaute],SubSubSubRes,SubSubRes),
+	cell((X,Y+1), Brd, (PieceDroite, _)),
+	concat([PieceDroite],SubSubRes,SubRes),
+	Ybis is Y-1,
+	cell((X,Ybis), Brd, (PieceGauche, _)),
+	concat([PieceGauche],SubRes,ResNoClean),
+	retire_elements(0,ResNoClean, Res).
+
+getNeighbours((X,Y),Brd,Res) :-
+	X = 1, Y > 1, Y < 7,
+	cell((X+1, Y), Brd, (PieceBasse, _)),
+	concat([PieceBasse],[], SubSubSubRes),
+	Xbis is X-1,
+	cell((Xbis, Y), Brd, (PieceHaute, _)),
+	concat([PieceHaute],SubSubSubRes,SubSubRes),
+	cell((X,Y+1), Brd, (PieceDroite, _)),
+	concat([PieceDroite],SubSubRes,SubRes),
+	Ybis is Y-1,
+	cell((X,Ybis), Brd, (PieceGauche, _)),
+	concat([PieceGauche],SubRes,ResNoClean),
+	retire_elements(0,ResNoClean, Res).
 
 /*
   hasNoFriend(Piece, Brd)
   ------------------------------
 	Check if Piece has no friendly piece next to it.
 */
-% hasNoFriend((X,Y), Brd) :-
-% 	cell((X,Y), Brd, (Piece,_)),
-% 	pieceToColor(Piece, Color),
-% 	cell((X+1, Y), Brd, (PieceBasse, _)),
-% 	\+pieceToColor(PieceBasse, Color),
-% 	Xbis is X-1,
-% 	cell((Xbis, Y), Brd, (PieceHaute, _)),
-% 	\+pieceToColor(PieceHaute, Color),
-% 	cell((X,Y+1), Brd, (PieceDroite, _)),
-% 	\+pieceToColor(PieceDroite, Color),
-% 	Ybis is Y-1,
-% 	cell((X,Ybis), Brd, (PieceGauche, _)),
-% 	\+pieceToColor(PieceGauche, Color).
-%
-%
-% hasStrongerOpponent((X,Y), Brd) :-
-% 	cell((X,Y), Brd, (Piece,_)),
-% 	pieceDenomination(FriendColor, FriendDenomination, Piece),
-% 	ennemyColor(FriendColor, EnnemyColor),
-% 	cell((X+1, Y), Brd, (PieceBasse, _)),
-% 	(  pieceDenomination(EnnemyColor, BasseDenomination, PieceBasse), stronger(BasseDenomination, FriendDenomination)
-%   -> true
-%   ;  cell((X+1, Y), Brd, (PieceBasse, _)),
-% 		(pieceDenomination(EnnemyColor, BasseDenomination, PieceBasse), stronger(BasseDenomination, FriendDenomination)
-% 		-> true
-% 		; Xbis is X-1, cell((Xbis, Y), Brd, (PieceHaute, _)),
-% 			( pieceDenomination(EnnemyColor, HauteDenomination, PieceHaute), stronger(HauteDenomination, FriendDenomination)
-% 			-> true
-% 			; cell((X, Y+1), Brd, (PieceDroite, _)),
-% 				(pieceDenomination(EnnemyColor, DroiteDenomination, PieceDroite), stronger(DroiteDenomination, FriendDenomination)
-% 				-> true
-% 				;Ybis is Y-1, cell((X, Ybis), Brd, (PieceGauche, _)),
-% 					(pieceDenomination(EnnemyColor, GaucheDenomination, PieceGauche), stronger(GaucheDenomination, FriendDenomination)
-% 					-> true
-% 					; false
-% 					)
-% 				)
-% 			)
-% 		)
-%   ).
+hasFriend((X,Y), ) :-
+	cell((X,Y), Brd, (Piece,_)),
+	pieceToColor(Piece, Color),
+	cell((X+1, Y), Brd, (PieceBasse, _)),
+	\+pieceToColor(PieceBasse, Color),
+	Xbis is X-1,
+	cell((Xbis, Y), Brd, (PieceHaute, _)),
+	\+pieceToColor(PieceHaute, Color),
+	cell((X,Y+1), Brd, (PieceDroite, _)),
+	\+pieceToColor(PieceDroite, Color),
+	Ybis is Y-1,
+	cell((X,Ybis), Brd, (PieceGauche, _)),
+	\+pieceToColor(PieceGauche, Color).
+
+
+hasStrongerOpponent((X,Y), Brd) :-
+	cell((X,Y), Brd, (Piece,_)),
+	pieceDenomination(FriendColor, FriendDenomination, Piece),
+	ennemyColor(FriendColor, EnnemyColor),
+	cell((X+1, Y), Brd, (PieceBasse, _)),
+	(  pieceDenomination(EnnemyColor, BasseDenomination, PieceBasse), stronger(BasseDenomination, FriendDenomination)
+  -> true
+  ;  cell((X+1, Y), Brd, (PieceBasse, _)),
+		(pieceDenomination(EnnemyColor, BasseDenomination, PieceBasse), stronger(BasseDenomination, FriendDenomination)
+		-> true
+		; Xbis is X-1, cell((Xbis, Y), Brd, (PieceHaute, _)),
+			( pieceDenomination(EnnemyColor, HauteDenomination, PieceHaute), stronger(HauteDenomination, FriendDenomination)
+			-> true
+			; cell((X, Y+1), Brd, (PieceDroite, _)),
+				(pieceDenomination(EnnemyColor, DroiteDenomination, PieceDroite), stronger(DroiteDenomination, FriendDenomination)
+				-> true
+				;Ybis is Y-1, cell((X, Ybis), Brd, (PieceGauche, _)),
+					(pieceDenomination(EnnemyColor, GaucheDenomination, PieceGauche), stronger(GaucheDenomination, FriendDenomination)
+					-> true
+					; false
+					)
+				)
+			)
+		)
+  ).
