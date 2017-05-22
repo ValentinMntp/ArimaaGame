@@ -14,7 +14,7 @@
 
 startGame :- writeMultSep(3,40), write("Hi human !"), nl,
  write("This is Arimaa game, and you're about to play against me. Please set your board first."),
- positioningPhase([[(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2)],
+ positioningPhase([[(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(rS, s2),(0, s2)],
   [(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1)],
   [(0, e),(0, e),(0 , t),(0, e),(0, e),(0, t),(0, e),(0, e)],
   [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
