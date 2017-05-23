@@ -40,17 +40,27 @@ round(PlayerColor) :-
 	round(EnnemyColor).
 
 doRound(Brd, gold) :-
-  askMovePlayer(Brd, PieceChoice, CellChoice),
-  authorizedPiece(PieceChoice).
+  askMovePlayer(Brd, Move),
 
 doRound(Brd, silver).
 
 
-askMovePlayer(Brd, PieceChoice, CellChoice) :-
+askMovePlayer(Brd, Move) :-
+  nl, wSep(60), nl,
+	repeat,
   write("Choose the piece to move [Answer with format X,Y.]"), nl,
-  read(PieceChoice),
-  write("Choose cell where you want to move iMovet [Answer with format X,Y.]"), nl,
-  read(CellChoice).
+  read(StartPosition), nl,
+  write("Choose cell where you want to move it [Answer with format X,Y.]"), nl,
+  read(EndPosition), nl,
+  validMove(StartPosition, EndPosition),
+  Move = [StartPosition, EndPosition].
+
+moveAskedPossible(Cstart,Cend) :-
+
+	\+element([Cstart, Cend], PossibleMoves), !,
+	writeln("Movement is forbidden."),
+	fail.
+moveAskedPossible(_,_,_).
 
 % get_moves signature
 % get_moves(Moves, gamestate, board).
