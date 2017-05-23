@@ -14,7 +14,7 @@
 
 startGame :- writeMultSep(3,40), write("Hi human !"), nl,
  write("This is Arimaa game, and you're about to play against me. Please set your board first."),
- positioningPhase([[(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(rS, s2),(0, s2)],
+ positioningPhase([[(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2)],
   [(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1)],
   [(0, e),(0, e),(0 , t),(0, e),(0, e),(0, t),(0, e),(0, e)],
   [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
@@ -28,7 +28,7 @@ startGame :- writeMultSep(3,40), write("Hi human !"), nl,
 
 % Check if ennemy won
 round(PlayerColor) :-
-  enemyColor(PlayerColor, EnnemyColor),
+  ennemyColor(PlayerColor, EnnemyColor),
 	checkWinningConditions(Brd, EnnemyColor), !.
 
 % otherwise, play round
@@ -36,7 +36,7 @@ round(PlayerColor) :-
 	board(Brd),
 	write(" [Player "), write(PlayerColor), write("]"),
 	doRound(Brd, PlayerColor),
-	enemyColor(PlayerColor, EnnemyColor),
+	ennemyColor(PlayerColor, EnnemyColor),
 	round(EnnemyColor).
 
 doRound(Brd, gold) :-
@@ -46,7 +46,7 @@ doRound(Brd, silver).
 
 
 askMovePlayer(Brd, Move) :-
-  nl, wSep(60), nl,
+  nl, writeSep(60), nl,
 	repeat,
   write("Choose the piece to move [Answer with format X,Y.]"), nl,
   read(StartPosition), nl,

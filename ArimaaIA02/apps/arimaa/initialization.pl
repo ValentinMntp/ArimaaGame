@@ -64,7 +64,7 @@ playerPositioning(Brd, silver, ResBrd) :-
 		du camp PlayerSide
 	Unifie le résultat du positionnement avec ResBrd.
 */
-humanPositioningMenu(Brd, [], _, Brd) :- showBrd(Brd).
+/*humanPositioningMenu(Brd, [], _, Brd) :- showBrd(Brd).
 humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	repeat, nl, writeSep(20), nl,
 	showBrd(Brd),
@@ -74,6 +74,17 @@ humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	pieceDenomination(PlayerSide, T, TypePion),
 	cellType((X,Y), Brd, TypeCell),
 	setCell(Brd, (TypePion, TypeCell), CHOICE, SubBrd),
+	humanPositioningMenu(SubBrd, Q, PlayerSide, ResBrd).
+*/
+
+humanPositioningMenu(Brd, [],_, Brd) :-
+	nl, write("Human initialization"), showBrd(Brd), !.
+humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
+	repeat, generateRandomStartPositionGold(X,Y),
+	checkValidPosition(Brd, PlayerSide,(X,Y)),
+	pieceDenomination(PlayerSide, T, TypePion),
+	cellType((X,Y), Brd, TypeCell),
+	setCell(Brd, (TypePion, TypeCell), (X,Y), SubBrd),
 	humanPositioningMenu(SubBrd, Q, PlayerSide, ResBrd).
 
 
@@ -87,7 +98,7 @@ humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 iaPositioningMenu(Brd, [],_, Brd) :-
 	nl, write("AI initialization"), showBrd(Brd), !.
 iaPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
-	repeat, generateRandomStartPosition(X,Y),
+	repeat, generateRandomStartPositionSilver(X,Y),
 	checkValidPosition(Brd, PlayerSide,(X,Y)),
 	pieceDenomination(PlayerSide, T, TypePion),
 	cellType((X,Y), Brd, TypeCell),
@@ -101,4 +112,5 @@ iaPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	Génére des coordonnées aléatoires pour
 	le placement des pions pour l'IA
 */
-generateRandomStartPosition(X,Y) :- random(1,3,X), random(1,9,Y).
+generateRandomStartPositionSilver(X,Y) :- random(1,3,X), random(1,9,Y).
+generateRandomStartPositionGold(X,Y) :- random(7,9,X), random(1,9,Y).
