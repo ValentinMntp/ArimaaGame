@@ -6,6 +6,7 @@
 :- include('internalTools.pl').
 :- include('print.pl').
 :- include('initialization.pl').
+:- include('engine.pl').
 
 
 
@@ -40,7 +41,7 @@ round(PlayerColor) :-
 	round(EnnemyColor).
 
 doRound(Brd, gold) :-
-  askMovePlayer(Brd, Move),
+  askMovePlayer(Brd, Move).
 
 doRound(Brd, silver).
 
@@ -52,15 +53,16 @@ askMovePlayer(Brd, Move) :-
   read(StartPosition), nl,
   write("Choose cell where you want to move it [Answer with format X,Y.]"), nl,
   read(EndPosition), nl,
-  validMove(StartPosition, EndPosition),
-  Move = [StartPosition, EndPosition].
+  getValidMoves(StartPosition, [], Moves, 0),
+  element(EndPosition,Moves).
 
-moveAskedPossible(Cstart,Cend) :-
+getValidMoves(_,_,_,4).
+getValidMoves(Position, History, Moves, N) :-
+  N < 5, Tmp is N+1,
+  getAroundPositions(Position, Res).
+  %getValidMoves(,[Position], Tmp).
 
-	\+element([Cstart, Cend], PossibleMoves), !,
-	writeln("Movement is forbidden."),
-	fail.
-moveAskedPossible(_,_,_).
+
 
 % get_moves signature
 % get_moves(Moves, gamestate, board).

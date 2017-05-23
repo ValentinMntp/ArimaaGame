@@ -180,17 +180,11 @@ setRowCell([T|Q], Cell, J, [T|SubRow]) :-
 %  Check if a rabbit of Silver reached goal. If so Silver wins.
 checkRabbitInGoal(Brd, silver):-
     brdToRow(8, Brd, Row),
-    element((rS,g2), Row),
-    nl, writeMultSep(2, 60),
-    nl, writeln("AI wins ! It seems to be too strong for you mate...").
+    element((rS,g2), Row).
 %  Check if a rabbit of Gold reached goal. If so Gold wins.
-
 checkRabbitInGoal(Brd, gold):-
     brdToRow(1, Brd, Row),
-    element((rG,s2), Row),
-    nl, writeMultSep(2, 60),
-    nl, writeln("You did it ! You beated the AI ! Congrats bro !").
-
+    element((rG,s2), Row).
 
 /*
   checkSilverRabbits(Brd)
@@ -256,7 +250,7 @@ checkRabbitInGoal(Brd, gold):-
 	Check if Piece is frozen (can't be moved).
 */
 isFrozen((X,Y), Brd) :-
-	getNeighbours((X,Y),Brd,L),
+	getNeighboursPieces((X,Y),Brd,L),
 	cell((X,Y), Brd, (Piece,_)),
 	hasNoFriend(Piece,L),
 	hasStrongerOpponent(Piece,L), !.
