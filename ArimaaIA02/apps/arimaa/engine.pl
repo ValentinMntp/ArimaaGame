@@ -8,11 +8,11 @@
 
 
 /*
-  getNeighbours((X,Y), Brd, L)
+  getNeighboursPieces((X,Y), Brd, L)
   ------------------------------
 	Unifies L with pieces that are next to (X,Y).
 */
-getNeighbours((X,Y),Brd,Res) :-
+getNeighboursPieces((X,Y),Brd,Res) :-
 	X > 1, X < 8, Y > 1, Y < 8,
 	cell((X+1, Y), Brd, (PieceBasse, _)),
 	concat([PieceBasse],[], SubSubSubRes),
@@ -26,7 +26,7 @@ getNeighbours((X,Y),Brd,Res) :-
 	concat([PieceGauche],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
-getNeighbours((X,Y),Brd,Res) :-
+getNeighboursPieces((X,Y),Brd,Res) :-
 	X = 1, Y > 1, Y < 8,
 	cell((X+1, Y), Brd, (PieceBasse, _)),
 	concat([PieceBasse],[], SubSubRes),
@@ -37,7 +37,7 @@ getNeighbours((X,Y),Brd,Res) :-
 	concat([PieceGauche],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
-getNeighbours((X,Y),Brd,Res) :-
+getNeighboursPieces((X,Y),Brd,Res) :-
 	X > 1, X < 8, Y = 1,
 	cell((X+1, Y), Brd, (PieceBasse, _)),
 	concat([PieceBasse],[], SubSubRes),
@@ -48,7 +48,7 @@ getNeighbours((X,Y),Brd,Res) :-
 	concat([PieceDroite],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
-getNeighbours((X,Y),Brd,Res) :-
+getNeighboursPieces((X,Y),Brd,Res) :-
 	X > 1, X < 8, Y = 8,
 	cell((X+1, Y), Brd, (PieceBasse, _)),
 	concat([PieceBasse],[], SubSubRes),
@@ -59,7 +59,7 @@ getNeighbours((X,Y),Brd,Res) :-
 	concat([PieceGauche],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
-getNeighbours((X,Y),Brd,Res) :-
+getNeighboursPieces((X,Y),Brd,Res) :-
 	X = 8, Y > 1, Y < 8,
 	Xbis is X-1,
 	cell((Xbis, Y), Brd, (PieceHaute, _)),
@@ -71,14 +71,14 @@ getNeighbours((X,Y),Brd,Res) :-
 	concat([PieceGauche],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
-getNeighbours((1,1),Brd,Res) :-
+getNeighboursPieces((1,1),Brd,Res) :-
 	cell((2, 1), Brd, (PieceBasse, _)),
 	concat([PieceBasse],[], SubRes),
 	cell((1,2), Brd, (PieceDroite, _)),
 	concat([PieceDroite],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
-getNeighbours((1,8),Brd,Res) :-
+getNeighboursPieces((1,8),Brd,Res) :-
 
 	cell((2,8), Brd, (PieceBasse, _)),
 	concat([PieceBasse],[], SubRes),
@@ -86,7 +86,7 @@ getNeighbours((1,8),Brd,Res) :-
 	concat([PieceGauche],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
-getNeighbours((8,1),Brd,Res) :-
+getNeighboursPieces((8,1),Brd,Res) :-
 
 	cell((7, 1), Brd, (PieceHaute, _)),
 	concat([PieceHaute],[], SubRes),
@@ -94,7 +94,7 @@ getNeighbours((8,1),Brd,Res) :-
 	concat([PieceDroite],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
-getNeighbours((8,8),Brd,Res) :-
+getNeighboursPieces((8,8),Brd,Res) :-
 
 	cell((7,8), Brd, (PieceHaute, _)),
 	concat([PieceHaute],[], SubRes),
