@@ -129,7 +129,11 @@ rowToCellType(1, [(_,Y)|_], Y) :- !.
 rowToCellType(R, [_|Q], Res) :- R2 is R-1, rowToCellType(R2, Q, Res).
 
 
-
+/*
+  setCell(Brd, cell ,(X,Y), Res)
+  ------------------------------
+  Unifies Res with the cell you want on position (X,Y)
+*/
 
 setCell([X|Q], Cell, (1,J), [SubRes|Q]) :-
 	setRowCell(X, Cell, J, SubRes), !.
@@ -267,6 +271,7 @@ hasNoFriend(Piece, [T|Q]) :-
 	\+pieceToColor(T, Color),
 	hasNoFriend(Piece, Q).
 
+
 /*
   hasStrongerOpponent(Piece, L)
   ------------------------------
@@ -279,3 +284,45 @@ hasStrongerOpponent(Piece, L) :-
 	stronger(EnnemyDenomination, PieceDenomination),
 	pieceDenomination(EnnemyColor, EnnemyDenomination, X),
 	element(X,L),!.
+
+
+/*
+  hasWeakerOpponent(Piece, L, Res)
+  ------------------------------
+	Check if piece has a weaker ennemy piece in list L
+*/
+hasWeakerOpponent(_,[],Res) :- fail.
+hasWeakerOpponent(Piece, L) :-
+	pieceDenomination(Color, PieceDenomination, Piece),
+	ennemyColor(Color, EnnemyColor),
+	stronger(PieceDenomination, EnnemyDenomination),
+	pieceDenomination(EnnemyColor, EnnemyDenomination, X),
+	element(X,L),!.
+
+
+
+
+/*
+	toTrap(piece,Brd,Res)
+	------------------------------
+	Check if a piece is trapped and if so it's deleted from the Game
+*/
+toTrap((X,Y),Brd,Res):-
+	element(X,[3,6]), element(Y,[3,6]),
+	getNeighboursPieces((X,Y),Brd,L),
+	hasNoFriend((X,Y),L),
+	setCell(Brd,(0,t),(X,Y),Res),
+	showBrd(Res).
+
+/*
+	canPullPush(piece,Brd)
+	------------------------------
+	Check if a piece can pull or push one of his neighbours
+
+
+canPullPush((X,Y),Brd) :-
+	getNeighboursPieces((X,Y),Brd,Neigh),
+	hasWeakerOpponent((X,Y),Neigh),
+	getNeighboursCells((X,Y),Brd,L),
+	write(L).
+*/
