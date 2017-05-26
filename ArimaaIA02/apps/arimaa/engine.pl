@@ -228,7 +228,6 @@ positionsFrom(K, Brd, (X,Y), Res) :-
 	neighbourPositionsFromList(Brd, MovesOne, MovesTwo, false, NewHistory,_),
 	friendPiecesFilter((X,Y), Brd, MovesTwo, Res).
 
-
 subPositionsFrom(1, Brd, (X,Y), Res, History, NewHistory) :-
 	neighbourPositions(Brd, (X,Y), Res, true, History, NewHistory), !.
 subPositionsFrom(K, Brd, (X,Y), Res, History, FinalHistory) :-
@@ -274,11 +273,11 @@ subFriendPiecesFilter(Brd, [(X,Y)|RestPos], gold, Res) :-
 	cell((X,Y), Brd, (Type,_)), Type = eG,
 	subFriendPiecesFilter(Brd, RestPos, gold, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = cG,
-	subFriendPiecesFilter(Brd, RestPos, gold, Res), !,
+	subFriendPiecesFilter(Brd, RestPos, gold, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = hG,
 	subFriendPiecesFilter(Brd, RestPos, gold, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = dG,
-	subFriendPiecesFilter(Brd, RestPos, gold, Res), !,
+	subFriendPiecesFilter(Brd, RestPos, gold, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = kG,
 	subFriendPiecesFilter(Brd, RestPos, gold, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = rG,
@@ -287,11 +286,11 @@ subFriendPiecesFilter(Brd, [(X,Y)|RestPos], silver, Res) :-
 	cell((X,Y), Brd, (Type,_)), Type = eS,
 	subFriendPiecesFilter(Brd, RestPos, silver, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = cS,
-	subFriendPiecesFilter(Brd, RestPos, silver, Res), !,
+	subFriendPiecesFilter(Brd, RestPos, silver, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = hS,
 	subFriendPiecesFilter(Brd, RestPos, silver, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = dS,
-	subFriendPiecesFilter(Brd, RestPos, silver, Res), !,
+	subFriendPiecesFilter(Brd, RestPos, silver, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = kS,
 	subFriendPiecesFilter(Brd, RestPos, silver, Res), !;
 	cell((X,Y), Brd, (Type,_)), Type = rS,
@@ -301,18 +300,15 @@ subFriendPiecesFilter(Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
 
 
 
+
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
-	write("hello update 1"),
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
 	cell((Xend, Yend), Brd, (_,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
-	write("avant to trap"),
-	toTrap((Xend, Yend), SubBrdRes, BrdRes),
-	write("so").
+	toTrap((Xend, Yend), SubBrdRes, BrdRes).
 
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
-	write("hello update 2"),
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
 	cell((Xend, Yend), Brd, (_,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),

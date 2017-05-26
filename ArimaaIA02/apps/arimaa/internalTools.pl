@@ -308,16 +308,11 @@ hasWeakerOpponent(Piece, L) :-
 	Check if a piece is trapped and if so it's deleted from the Game
 */
 toTrap((X,Y),Brd,Res):-
-	write("debut to trap"),
 	element(X,[3,6]), element(Y,[3,6]),
 	getNeighboursPieces((X,Y),Brd,L),
-	write(L),
 	cell((X,Y), Brd, (Piece,_)),
 	hasNoFriend(Piece,L),
-	write("apres NoFriend"),
-	setCell(Brd,(0,t),(X,Y),Res),
-	write("hello"),
-	showBrd(Res).
+	setCell(Brd,(0,t),(X,Y),Res).
 
 /*
 	canPullPush(piece,Brd)

@@ -30,7 +30,9 @@ writeMultSep(K, N) :- writeSep(N), nl, SK is K - 1, writeMultSep(SK, N).
 */
 wTab :- write(" ").
 
-
+writeAllList([]).
+writeAllList([T|Q]) :-
+  write(T), nl, writeAllList(Q).
 /*
 	============================================================
 	============================================================
