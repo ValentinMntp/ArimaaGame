@@ -301,15 +301,15 @@ subFriendPiecesFilter(Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
 
 
 
-updateBrd(Brd, (Xstart, Ystart), (Xend, Yend),BrdRes) :-
+updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
 	cell((Xend, Yend), Brd, (_,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
-	toTrap((Xend, Yend), SubBrdRes, BrdRes), !.
+	toTrap((Xend, Yend), SubBrdRes, BrdRes).
 
-	updateBrd(Brd, (Xstart, Ystart), (Xend, Yend),BrdRes) :-
-		cell((Xstart, Ystart), Brd, (PieceType, CellType)),
-		cell((Xend, Yend), Brd, (_,CellType2)),
-		setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
-		setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), BrdRes).
+updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
+	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
+	cell((Xend, Yend), Brd, (_,CellType2)),
+	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
+	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), BrdRes).

@@ -42,13 +42,13 @@ round(PlayerColor) :-
 doRound(Brd, gold) :-
   possibleMoves(Brd, gold, PossibleMoves),
   askMovePlayer(Brd,gold, PossibleMoves, Move),
-  updateBrd(Brd, StartPosition, EndPosition, BrdRes),
+  updateBrd(Brd, Move, BrdRes),
   setBrd(BrdRes).
 
 doRound(Brd, silver) :-
   possibleMoves(Brd, silver, PossibleMoves),
   askMovePlayer(Brd, silver, PossibleMoves, Move),
-  updateBrd(Brd, StartPosition, EndPosition, BrdRes),
+  updateBrd(Brd, Move, BrdRes),
   setBrd(BrdRes).
 
 
