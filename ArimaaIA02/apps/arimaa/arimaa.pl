@@ -10,14 +10,11 @@
 
 
 
-
-
-
 startGame :- writeMultSep(3,40), write("Hi human !"), nl,
  write("This is Arimaa game, and you're about to play against me. Please set your board first."),
  positioningPhase([[(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2)],
   [(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1)],
-  [(0, e),(0, e),(rG , t),(0, e),(0, e),(0, t),(0, e),(0, e)],
+  [(0, e),(0, e),(0 , t),(0, e),(0, e),(0, t),(0, e),(0, e)],
   [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
   [(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e),(0, e)],
   [(0, e),(0, e),(0, t),(0, e),(0, e),(0, t),(0, e),(0, e)],
@@ -30,38 +27,46 @@ startGame :- writeMultSep(3,40), write("Hi human !"), nl,
 % Check if ennemy won
 round(PlayerColor) :-
   ennemyColor(PlayerColor, EnnemyColor),
+  board(Brd),
 	checkWinningConditions(Brd, EnnemyColor), !.
 
 % otherwise, play round
 round(PlayerColor) :-
 	board(Brd),
+  showBrd(Brd),
 	write(" [Player "), write(PlayerColor), write("]"),
 	doRound(Brd, PlayerColor),
 	ennemyColor(PlayerColor, EnnemyColor),
 	round(EnnemyColor).
 
 doRound(Brd, gold) :-
-  askMovePlayer(Brd, Move).
+  possibleMoves(Brd, gold, PossibleMoves),
+  askMovePlayer(Brd,gold, PossibleMoves, Move),
+  updateBrd(Brd, StartPosition, EndPosition, BrdRes),
+  setBrd(BrdRes).
 
-doRound(Brd, silver).
+doRound(Brd, silver) :-
+  possibleMoves(Brd, silver, PossibleMoves),
+  askMovePlayer(Brd, silver, PossibleMoves, Move),
+  updateBrd(Brd, StartPosition, EndPosition, BrdRes),
+  setBrd(BrdRes).
 
 
-askMovePlayer(Brd, Move) :-
+askMovePlayer(Brd, PlayerSide, PossibleMoves, Move) :-
   nl, writeSep(60), nl,
 	repeat,
   write("Choose the piece to move [Answer with format X,Y.]"), nl,
   read(StartPosition), nl,
-  write("Choose cell where you want to move it [Answer with format X,Y.]"), nl,
+  write("Choose cell destination [Answer with format X,Y.]"), nl,
   read(EndPosition), nl,
-  getValidMoves(StartPosition, [], Moves, 0),
-  element(EndPosition,Moves).
+  moveAskedPossible(StartPosition, EndPosition, PossibleMoves),
+	Move = [StartPosition,EndPosition].
 
-getValidMoves(_,_,_,4).
-getValidMoves(Position, History, Moves, N) :-
-  N < 5, Tmp is N+1,
-  getAroundPositions(Position, Res).
-  %getValidMoves(,[Position], Tmp).
-
+moveAskedPossible(StartPosition,EndPosition, PossibleMoves) :-
+	\+element([StartPosition, EndPosition], PossibleMoves), !,
+	writeln("Forbidden move."),
+	fail.
+moveAskedPossible(_,_,_).
 
 
 % get_moves signature

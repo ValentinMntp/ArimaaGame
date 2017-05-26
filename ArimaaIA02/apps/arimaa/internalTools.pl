@@ -291,7 +291,7 @@ hasStrongerOpponent(Piece, L) :-
   ------------------------------
 	Check if piece has a weaker ennemy piece in list L
 */
-hasWeakerOpponent(_,[],Res) :- fail.
+hasWeakerOpponent(_,[],_) :- fail.
 hasWeakerOpponent(Piece, L) :-
 	pieceDenomination(Color, PieceDenomination, Piece),
 	ennemyColor(Color, EnnemyColor),
