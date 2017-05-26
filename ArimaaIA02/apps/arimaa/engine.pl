@@ -157,30 +157,30 @@ getNeighboursPieces((8,8),Brd,Res) :-
 	Les moves sont de la forme :
 		[(Xstart, Ystart), (Xend, Yend) ]
 */
-possibleMoves(Brd, PlayerSide, PossibleMoves) :-
-	bPossibleMoves(Brd, Brd, PlayerSide, (1,1), PossibleMoves), PossibleMoves \= [], !.
+possibleMoves(K, Brd, PlayerSide, PossibleMoves) :-
+	bPossibleMoves(K, Brd, Brd, PlayerSide, (1,1), PossibleMoves), PossibleMoves \= [], !.
 
-bPossibleMoves(_,[],_,_,[]) :- !.
-bPossibleMoves(Brd, [RowX|RowRest], PlayerSide, (X,Y), PossibleMoves) :-
+bPossibleMoves(_,_,[],_,_,[]) :- !.
+bPossibleMoves(K,Brd, [RowX|RowRest], PlayerSide, (X,Y), PossibleMoves) :-
 	SubX is X+1,
-	subPossibleMoves(Brd, RowX, PlayerSide, (X,Y), SubRes1),
-	bPossibleMoves(Brd, RowRest, PlayerSide, (SubX,Y), SubRes2),
+	subPossibleMoves(K,Brd, RowX, PlayerSide, (X,Y), SubRes1),
+	bPossibleMoves(K,Brd, RowRest, PlayerSide, (SubX,Y), SubRes2),
 	concat(SubRes1, SubRes2, PossibleMoves).
 
-subPossibleMoves(_,[],_,_,[]) :- !.
+subPossibleMoves(_,_,[],_,_,[]) :- !.
 % Si la pièce est de la couleur de PlayerSide, explorer ses mouvements
-subPossibleMoves(Brd, [(PieceType,_)|CellRest], PlayerSide, (X,Y), PossibleMoves) :-
+subPossibleMoves(K,Brd, [(PieceType,_)|CellRest], PlayerSide, (X,Y), PossibleMoves) :-
 	pieceToColor(PieceType, PlayerSide),
 	\+isFrozen((X,Y),Brd),
-	movesFrom(4,Brd, (X,Y), PossibleMovesFirst),
+	movesFrom(K,Brd, (X,Y), PossibleMovesFirst),
 	SubY is Y + 1,
-	subPossibleMoves(Brd, CellRest, PlayerSide, (X,SubY), PossibleMovesRest),
+	subPossibleMoves(K, Brd, CellRest, PlayerSide, (X,SubY), PossibleMovesRest),
 	concat(PossibleMovesFirst, PossibleMovesRest, PossibleMoves).
 
 % Si la pièce n'est pas de la couleur de PlayerSide, case suivante
-subPossibleMoves(Brd,[_|CellRest],PlayerSide,(X,Y), Res) :-
+subPossibleMoves(K, Brd,[_|CellRest],PlayerSide,(X,Y), Res) :-
 	SubY is Y + 1,
-	subPossibleMoves(Brd, CellRest, PlayerSide, (X, SubY), Res), !.
+	subPossibleMoves(K, Brd, CellRest, PlayerSide, (X, SubY), Res), !.
 
 
 /*
@@ -203,10 +203,15 @@ neighbourPositionsFromList(Brd, [CoupleTete|QueueCouples], MovesTotaux, CheckEmp
 	sur le plateau Brd.
 	Les mouvements sont de la forme (C, CoordonnesdArrivee)
 */
+movesFrom(0,_,_,_) :- !.
 
 movesFrom(K, Brd, (X,Y), MovesFrom) :-
 	positionsFrom(K, Brd, (X,Y), PositionsFrom),
-	subMovesFrom((X,Y), PositionsFrom, MovesFrom).
+	subMovesFrom((X,Y), PositionsFrom, MovesFrom1),
+	K2 is K-1,
+	movesFrom(K2, Brd,(X,Y), MovesFrom2),
+	concat(MovesFrom1, MovesFrom2, MovesFrom3),
+	retire_doublons(MovesFrom3, MovesFrom).
 
 subMovesFrom(_,[],[]) :- !.
 subMovesFrom((X,Y), [Pos|RestPos], [[(X,Y), Pos]|RestMoves]) :-
@@ -313,3 +318,17 @@ updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xend, Yend), Brd, (_,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), BrdRes).
+
+
+computeDist([(W,X),(Y,Z)], Dist) :-
+	W =< Y, X =< Z,
+	Dist is Y-W+Z-X,!.
+computeDist([(W,X),(Y,Z)], Dist) :-
+	W >= Y, X >= Z,
+	Dist is W-Y+X-Z,!.
+computeDist([(W,X),(Y,Z)], Dist) :-
+	W =< Y, X >= Z,
+	Dist is Y-W+X-Z,!.
+computeDist([(W,X),(Y,Z)], Dist) :-
+	W >= Y, X =< Z,
+	Dist is W-Y+Z-X,!.

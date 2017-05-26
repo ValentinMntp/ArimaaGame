@@ -35,21 +35,29 @@ round(PlayerColor) :-
 	board(Brd),
   showBrd(Brd),
 	write(" [Player "), write(PlayerColor), write("]"),
-	doRound(Brd, PlayerColor),
+	doRound(Brd, PlayerColor, 4),
 	ennemyColor(PlayerColor, EnnemyColor),
 	round(EnnemyColor).
 
-doRound(Brd, gold) :-
-  possibleMoves(Brd, gold, PossibleMoves),
+doRound(Brd, gold, 0) :- !.
+doRound(Brd, gold, K) :-
+  nl, write(K), write(" moves remaining."), nl,
+  possibleMoves(K, Brd, gold, PossibleMoves),
   askMovePlayer(Brd,gold, PossibleMoves, Move),
   updateBrd(Brd, Move, BrdRes),
-  setBrd(BrdRes).
+  setBrd(BrdRes),
+  showBrd(BrdRes),
+  computeDist(Move, Dist),
+  K2 is K - Dist,
+  doRound(BrdRes, gold, K2).
 
-doRound(Brd, silver) :-
-  possibleMoves(Brd, silver, PossibleMoves),
+doRound(Brd, silver, K) :-
+  possibleMoves(K, Brd, silver, PossibleMoves),
   askMovePlayer(Brd, silver, PossibleMoves, Move),
   updateBrd(Brd, Move, BrdRes),
-  setBrd(BrdRes).
+  setBrd(BrdRes),
+  doRound(Brd, silver, K2).
+
 
 
 askMovePlayer(Brd, PlayerSide, PossibleMoves, Move) :-
