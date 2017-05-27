@@ -287,11 +287,11 @@ hasStrongerOpponent(Piece, L) :-
 
 
 /*
-  hasWeakerOpponent(Piece, L, Res)
+  hasWeakerOpponent(Piece, L)
   ------------------------------
 	Check if piece has a weaker ennemy piece in list L
 */
-hasWeakerOpponent(_,[],_) :- fail.
+hasWeakerOpponent(_,[]) :- fail.
 hasWeakerOpponent(Piece, L) :-
 	pieceDenomination(Color, PieceDenomination, Piece),
 	ennemyColor(Color, EnnemyColor),
@@ -318,11 +318,29 @@ toTrap((X,Y),Brd,Res):-
 	canPullPush(piece,Brd)
 	------------------------------
 	Check if a piece can pull or push one of his neighbours
-
+*/
 
 canPullPush((X,Y),Brd) :-
 	getNeighboursPieces((X,Y),Brd,Neigh),
 	hasWeakerOpponent((X,Y),Neigh),
-	getNeighboursCells((X,Y),Brd,L),
-	write(L).
-*/
+	getNeighboursCells((X,Y),L),
+	canBePush((X,Y),L,Brd,Res)
+	.
+
+	/*
+		canBePush(L,Brd,Res)
+		------------------------------
+		Check if a neighbour piece can be push by the piece you're moving.
+		Res contain the list of cell who can be push.
+	*/
+
+	canBePush((X,Y),[],Brd,[]).
+	canBePush((X,Y),[T|Q],Brd,Res) :-
+		canBePush((X,Y),Q,Brd,Res),
+		cell((X,Y),Brd,(MyPiece,_)),
+		cell(T,Brd,(OpponentPiece,_)),
+		stronger(MyPiece, OpponentPiece),
+		getNeighboursPieces(T,Brd,L),
+		hasNoFriend(OpponentPiece,L),
+		% regarder si la case siuvante est libre avec wayIsFree
+		

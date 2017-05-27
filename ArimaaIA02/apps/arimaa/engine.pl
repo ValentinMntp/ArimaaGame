@@ -99,6 +99,71 @@ getNeighboursPieces((8,8),Brd,Res) :-
 	concat([PieceGauche],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
+/*
+  getNeighboursCells((X,Y),Res),
+  ------------------------------
+	Unifies Res with cell that are next to (X,Y).
+*/
+
+getNeighboursCells((X,Y),Res) :-
+	X > 1, X < 8, Y > 1, Y < 8,
+	Bas is X+1,
+	concat([(Bas, Y)],[], SubSubSubRes),
+	Haut is X-1,
+	concat([(Haut, Y)],SubSubSubRes,SubSubRes),
+	Droite is Y+1,
+	concat([(X,Droite)],SubSubRes,SubRes),
+	Gauche is Y-1,
+	concat([(X,Gauche)],SubRes,Res),!.
+
+getNeighboursCells((X,Y),Res) :-
+	X = 1, Y > 1, Y < 8,
+	Bas is X+1,
+	concat([(Bas, Y)],[], SubSubRes),
+	Droite is Y+1,
+	concat([(X,Droite)], SubSubRes,SubRes),
+	Gauche is Y-1,
+	concat([(X,Gauche)],SubRes,Res),!.
+
+getNeighboursCells((X,Y),Res) :-
+	X > 1, X < 8, Y = 1,
+	Bas is X+1,
+	concat([(Bas, Y)],[], SubSubRes),
+	Haut is X-1,
+	concat([(Haut, Y)],SubSubRes,SubRes),
+	Droite is Y+1,
+	concat([(X,Droite)],SubRes,Res),!.
+
+getNeighboursCells((X,Y),Res) :-
+	X > 1, X < 8, Y = 8,
+	Bas is X+1,
+	concat([(Bas, Y)],[], SubSubRes),
+	Haut is X-1,
+	concat([(Haut, Y)],SubSubRes,SubRes),
+	Gauche is Y-1,
+	concat([(X,Gauche)],SubRes,Res),!.
+
+getNeighboursCells((X,Y),Res) :-
+	X = 8, Y > 1, Y < 8,
+	Haut is X-1,
+	concat([(Haut, Y)],[],SubSubRes),
+	Droite is Y+1,
+	concat([(X,Droite)],SubSubRes,SubRes),
+	Gauche is Y-1,
+	concat([(X,Gauche)],SubRes,Res),!.
+
+getNeighboursCells((1,1),Res) :-
+	concat([(1,2),(2,1)],[],Res),!.
+
+getNeighboursCells((1,8),Res) :-
+	concat([(1,7),(2,8)],[],Res),!.
+
+getNeighboursCells((8,1),Res) :-
+	concat([(7,1),(8,2)],[],Res),!.
+
+getNeighboursCells((8,8),Res) :-
+	concat([(7,8),(8,7)],[],Res),!.
+
 
   /*
   	nextTo(C, PosX, PosY, Brd, Boolean)
