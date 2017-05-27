@@ -163,26 +163,17 @@ setRowCell([T|Q], Cell, J, [T|SubRow]) :-
 	    Check if the only moves Gold has are 3rd time repetitions. If so Silver wins.    /// -> see later \\\
 	*/
 
-	% --------- Gold just made the move
-	/*checkWinningConditions(Brd, gold) :-
-	    checkSilverInGoldSide(Brd),
-	    checkGoldInSilverSide(Brd),
-	    checkGoldRabbits(Brd),
-	    checkSilverRabbits(Brd),
-	    checkSilverMove.
-	*/
-
 	% --------- Silver just made the move
-	checkWinningConditions(Brd, silver) :-
-	    checkRabbitInGoal(Brd, silver);
-	    checkRabbitInGoal(Brd, gold);
-	    checkGoldRabbits(Brd);
-	    checkSilverRabbits(Brd).
+checkWinningConditions(Brd, silver) :-
+    checkRabbitInGoal(Brd, silver);
+    checkRabbitInGoal(Brd, gold);
+    checkGoldRabbits(Brd);
+    checkSilverRabbits(Brd).
 
 checkWinningConditions(Brd, gold) :-
-    checkRabbitInGoal(Brd, gold);
-    checkRabbitInGoal(Brd, silver);
-    checkSilverRabbits(Brd);
+	  checkRabbitInGoal(Brd, gold);
+	  checkRabbitInGoal(Brd, silver);
+	  checkSilverRabbits(Brd);
 		checkGoldRabbits(Brd).
 
 %  Check if a rabbit of Silver reached goal. If so Silver wins.
