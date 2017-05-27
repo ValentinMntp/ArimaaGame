@@ -324,7 +324,7 @@ canPullPush((X,Y),Brd) :-
 	getNeighboursPieces((X,Y),Brd,Neigh),
 	hasWeakerOpponent((X,Y),Neigh),
 	getNeighboursCells((X,Y),L),
-	canBePush((X,Y),L,Brd,Res)
+	canBePush((X,Y),L,Brd)
 	.
 
 	/*
@@ -335,12 +335,22 @@ canPullPush((X,Y),Brd) :-
 	*/
 
 	canBePush((X,Y),[],Brd,[]).
-	canBePush((X,Y),[T|Q],Brd,Res) :-
-		canBePush((X,Y),Q,Brd,Res),
+	canBePush((X,Y),[T|Q],Brd) :-
+		canBePush((X,Y),Q,Brd),
 		cell((X,Y),Brd,(MyPiece,_)),
 		cell(T,Brd,(OpponentPiece,_)),
 		stronger(MyPiece, OpponentPiece),
 		getNeighboursPieces(T,Brd,L),
 		hasNoFriend(OpponentPiece,L),
-		% regarder si la case siuvante est libre avec wayIsFree
-		
+		wayIsFree(T,Brd).
+
+
+	/*
+	  wayIsFree((X,Y),(A,B),Brd)
+	  ------------------------------
+		Check if piece (A,B) can be push by piece (X,Y)
+	*/
+
+		wayIsFree((A,B),Brd):-
+			getNeighboursPiecesWith0((A,B),Brd,Res),
+			element(0,Res).

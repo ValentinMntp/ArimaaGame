@@ -99,6 +99,90 @@ getNeighboursPieces((8,8),Brd,Res) :-
 	concat([PieceGauche],SubRes,ResNoClean),
 	retire_elements(0,ResNoClean, Res), !.
 
+
+/*
+  getNeighboursPieces((X,Y), Brd, L)
+  ------------------------------
+	Unifies L with pieces that are next to (X,Y).
+*/
+	getNeighboursPiecesWith0((X,Y),Brd,Res) :-
+		X > 1, X < 8, Y > 1, Y < 8,
+		cell((X+1, Y), Brd, (PieceBasse, _)),
+		concat([PieceBasse],[], SubSubSubRes),
+		Xbis is X-1,
+		cell((Xbis, Y), Brd, (PieceHaute, _)),
+		concat([PieceHaute],SubSubSubRes,SubSubRes),
+		cell((X,Y+1), Brd, (PieceDroite, _)),
+		concat([PieceDroite],SubSubRes,SubRes),
+		Ybis is Y-1,
+		cell((X,Ybis), Brd, (PieceGauche, _)),
+		concat([PieceGauche],SubRes,Res),!.
+
+	getNeighboursPiecesWith0((X,Y),Brd,Res) :-
+		X = 1, Y > 1, Y < 8,
+		cell((X+1, Y), Brd, (PieceBasse, _)),
+		concat([PieceBasse],[], SubSubRes),
+		cell((X,Y+1), Brd, (PieceDroite, _)),
+		concat([PieceDroite],SubSubRes,SubRes),
+		Ybis is Y-1,
+		cell((X,Ybis), Brd, (PieceGauche, _)),
+		concat([PieceGauche],SubRes,Res),!.
+
+	getNeighboursPiecesWith0((X,Y),Brd,Res) :-
+		X > 1, X < 8, Y = 1,
+		cell((X+1, Y), Brd, (PieceBasse, _)),
+		concat([PieceBasse],[], SubSubRes),
+		Xbis is X-1,
+		cell((Xbis, Y), Brd, (PieceHaute, _)),
+		concat([PieceHaute],SubSubRes,SubRes),
+		cell((X,Y+1), Brd, (PieceDroite, _)),
+		concat([PieceDroite],SubRes,Res),!.
+
+	getNeighboursPiecesWith0((X,Y),Brd,Res) :-
+		X > 1, X < 8, Y = 8,
+		cell((X+1, Y), Brd, (PieceBasse, _)),
+		concat([PieceBasse],[], SubSubRes),
+		Xbis is X-1,
+		cell((Xbis, Y), Brd, (PieceHaute, _)),
+		concat([PieceHaute],SubSubRes,SubRes),
+		cell((X,Ybis), Brd, (PieceGauche, _)),
+		concat([PieceGauche],SubRes,Res),!.
+
+	getNeighboursPiecesWith0((X,Y),Brd,Res) :-
+		X = 8, Y > 1, Y < 8,
+		Xbis is X-1,
+		cell((Xbis, Y), Brd, (PieceHaute, _)),
+		concat([PieceHaute],[],SubSubRes),
+		cell((X,Y+1), Brd, (PieceDroite, _)),
+		concat([PieceDroite],SubSubRes,SubRes),
+		Ybis is Y-1,
+		cell((X,Ybis), Brd, (PieceGauche, _)),
+		concat([PieceGauche],SubRes,Res),!.
+
+	getNeighboursPiecesWith0((1,1),Brd,Res) :-
+		cell((2, 1), Brd, (PieceBasse, _)),
+		concat([PieceBasse],[], SubRes),
+		cell((1,2), Brd, (PieceDroite, _)),
+		concat([PieceDroite],SubRes,Res),!.
+
+	getNeighboursPiecesWith0((1,8),Brd,Res) :-
+		cell((2,8), Brd, (PieceBasse, _)),
+		concat([PieceBasse],[], SubRes),
+		cell((1,7), Brd, (PieceGauche, _)),
+		concat([PieceGauche],SubRes,Res),!.
+
+	getNeighboursPiecesWith0((8,1),Brd,Res) :-
+		cell((7, 1), Brd, (PieceHaute, _)),
+		concat([PieceHaute],[], SubRes),
+		cell((8, 2), Brd, (PieceDroite, _)),
+		concat([PieceDroite],SubRes,Res),!.
+
+	getNeighboursPiecesWith0((8,8),Brd,Res) :-
+		cell((7,8), Brd, (PieceHaute, _)),
+		concat([PieceHaute],[], SubRes),
+		cell((8,7), Brd, (PieceGauche, _)),
+		concat([PieceGauche],SubRes,Res),!.
+
 /*
   getNeighboursCells((X,Y),Res),
   ------------------------------
@@ -165,16 +249,17 @@ getNeighboursCells((8,8),Res) :-
 	concat([(7,8),(8,7)],[],Res),!.
 
 
-  /*
-  	nextTo(C, PosX, PosY, Brd, Boolean)
-  	------------------------------
-  	Unifie le couple C avec des coordonnées
-  	voisines de celles de la position
-  	de coordonnées (PosX,PosY)
 
-  	- Vérifie si la cellule voisine est vide
-  		si Boolean est à true
-  */
+/*
+	nextTo(C, PosX, PosY, Brd, Boolean)
+	------------------------------
+	Unifie le couple C avec des coordonnées
+	voisines de celles de la position
+	de coordonnées (PosX,PosY)
+
+	- Vérifie si la cellule voisine est vide
+		si Boolean est à true
+*/
   nextTo((Xstart, Ystart), Brd, (Xres,Yres), true) :-
   	Xres is Xstart - 1, Yres is Ystart,
   		Xres>0, Yres>0, Xres<9, Yres<9,
