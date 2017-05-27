@@ -290,13 +290,13 @@ subMovesFrom((X,Y), [Pos|RestPos], [[(X,Y), Pos]|RestMoves]) :-
 	en réalisant exactement K mouvements.
 */
 positionsFrom(1, Brd, (X,Y), Res) :-
-	neighbourPositions(Brd, (X,Y), SubRes, false, [(X,Y)], _),
-	friendPiecesFilter((X,Y), Brd, SubRes, Res), !.
+	neighbourPositions(Brd, (X,Y), SubSubRes, false, [(X,Y)], _),
+	friendPiecesFilter((X,Y), Brd, SubSubRes, SubRes), ennemyPiecesFilter((X,Y), Brd, SubRes, Res), !.
 positionsFrom(K, Brd, (X,Y), Res) :-
 	K2 is K-1,
 	subPositionsFrom(K2, Brd, (X,Y), MovesOne, [(X,Y)], NewHistory),
 	neighbourPositionsFromList(Brd, MovesOne, MovesTwo, false, NewHistory,_),
-	friendPiecesFilter((X,Y), Brd, MovesTwo, Res).
+	friendPiecesFilter((X,Y), Brd, MovesTwo, SubRes), ennemyPiecesFilter((X,Y), Brd, SubRes, Res).
 
 subPositionsFrom(1, Brd, (X,Y), Res, History, NewHistory) :-
 	neighbourPositions(Brd, (X,Y), Res, true, History, NewHistory), !.
@@ -367,6 +367,69 @@ subFriendPiecesFilter(Brd, [(X,Y)|RestPos], silver, Res) :-
 	subFriendPiecesFilter(Brd, RestPos, silver, Res), !.
 subFriendPiecesFilter(Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
 	subFriendPiecesFilter(Brd, RestPos, PlayerType, Res).
+
+	/*
+		ennemyPiecesFilter((X,Y), Brd, SubRes, Res)
+		------------------------------
+		Unifie Res avec la liste des positions atteignables
+		depuis (X,Y), retirée des positions avec pièces amis de (X,Y)
+	*/
+	ennemyPiecesFilter((X,Y), Brd, SubRes, Res) :-
+		cell((X,Y), Brd, (PieceType,_)), PieceType = eG, !,
+		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
+		cell((X,Y), Brd, (PieceType,_)), PieceType = cG, !,
+		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
+		cell((X,Y), Brd, (PieceType,_)), PieceType = hG, !,
+		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
+		cell((X,Y), Brd, (PieceType,_)), PieceType = dG, !,
+		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
+		cell((X,Y), Brd, (PieceType,_)), PieceType = kG, !,
+		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
+		cell((X,Y), Brd, (PieceType,_)), PieceType = rG, !,
+		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
+		cell((X,Y), Brd, (PieceType, _)), PieceType = eS, !,
+		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
+		cell((X,Y), Brd, (PieceType, _)), PieceType = cS, !,
+		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
+		cell((X,Y), Brd, (PieceType, _)), PieceType = hS, !,
+		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
+		cell((X,Y), Brd, (PieceType, _)), PieceType = dS, !,
+		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
+		cell((X,Y), Brd, (PieceType, _)), PieceType = kS, !,
+		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
+		cell((X,Y), Brd, (PieceType,_)), PieceType = rS,
+		subEnnemyPiecesFilter(Brd, SubRes, silver, Res).
+
+	subEnnemyPiecesFilter(_, [], _, []) :- !.
+	subEnnemyPiecesFilter(Brd, [(X,Y)|RestPos], gold, Res) :-
+		cell((X,Y), Brd, (Type,_)), Type = eS,
+		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = cS,
+		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = hS,
+		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = dS,
+		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = kS,
+		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = rS,
+		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !.
+	subEnnemyPiecesFilter(Brd, [(X,Y)|RestPos], silver, Res) :-
+		cell((X,Y), Brd, (Type,_)), Type = eG,
+		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = cG,
+		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = hG,
+		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = dG,
+		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = kG,
+		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
+		cell((X,Y), Brd, (Type,_)), Type = rG,
+		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !.
+	subEnnemyPiecesFilter(Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
+		subEnnemyPiecesFilter(Brd, RestPos, PlayerType, Res).
+
 
 
 

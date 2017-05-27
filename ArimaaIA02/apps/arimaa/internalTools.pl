@@ -174,21 +174,30 @@ setRowCell([T|Q], Cell, J, [T|SubRow]) :-
 
 	% --------- Silver just made the move
 	checkWinningConditions(Brd, silver) :-
-	    checkRabbitInGoal(Brd, silver),
-	    checkRabbitInGoal(Brd, gold),
-	    checkGoldRabbits(Brd),
-	    checkSilverRabbits(Brd),
-	    checkGoldMove.
+	    checkRabbitInGoal(Brd, silver);
+	    checkRabbitInGoal(Brd, gold);
+	    checkGoldRabbits(Brd);
+	    checkSilverRabbits(Brd).
 
+checkWinningConditions(Brd, gold) :-
+    checkRabbitInGoal(Brd, gold);
+    checkRabbitInGoal(Brd, silver);
+    checkSilverRabbits(Brd);
+		checkGoldRabbits(Brd).
 
 %  Check if a rabbit of Silver reached goal. If so Silver wins.
 checkRabbitInGoal(Brd, silver):-
     brdToRow(8, Brd, Row),
-    element((rS,g2), Row).
+    element((rS,g2), Row),
+		nl, writeMultSep(2, 60),
+		nl, writeln("This AI looks too strong for you, mate... Try again").
+
 %  Check if a rabbit of Gold reached goal. If so Gold wins.
 checkRabbitInGoal(Brd, gold):-
     brdToRow(1, Brd, Row),
-    element((rG,s2), Row).
+    element((rG,s2), Row),
+		nl, writeMultSep(2, 60),
+		nl, writeln("You did it ! Congratulations mate !").
 
 /*
   checkSilverRabbits(Brd)
@@ -213,7 +222,7 @@ checkRabbitInGoal(Brd, gold):-
 	    brdToRow(8, Brd, Row8),
 	    \+element((rS,_), Row8),
 	    nl, writeMultSep(2, 60),
-	    nl, writeln("Gold is the winner").
+	    nl, writeln("You did it ! Congratulations mate !").
 
 /*
   checkGoldRabbits(Brd)
@@ -238,7 +247,7 @@ checkRabbitInGoal(Brd, gold):-
 	    brdToRow(8, Brd, Row8),
 	    \+element((rG,_), Row8),
 	    nl, writeMultSep(2, 60),
-	    nl, writeln("Silver is the winner").
+	    nl, writeln("This AI looks too strong for you, mate... Try again").
 
 
 /*
@@ -341,6 +350,5 @@ canPullPush((X,Y),Brd) :-
 		cell(T,Brd,(OpponentPiece,_)),
 		stronger(MyPiece, OpponentPiece),
 		getNeighboursPieces(T,Brd,L),
-		hasNoFriend(OpponentPiece,L),
+		hasNoFriend(OpponentPiece,L).
 		% regarder si la case siuvante est libre avec wayIsFree
-		

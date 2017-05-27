@@ -39,7 +39,7 @@ round(PlayerColor) :-
 	ennemyColor(PlayerColor, EnnemyColor),
 	round(EnnemyColor).
 
-doRound(Brd, gold, 0) :- !.
+doRound(Brd, _, 0) :- !.
 doRound(Brd, gold, K) :-
   nl, write(K), write(" moves remaining."), nl,
   possibleMoves(K, Brd, gold, PossibleMoves),
@@ -52,11 +52,15 @@ doRound(Brd, gold, K) :-
   doRound(BrdRes, gold, K2).
 
 doRound(Brd, silver, K) :-
+  nl, write(K), write(" moves remaining."), nl,
   possibleMoves(K, Brd, silver, PossibleMoves),
-  askMovePlayer(Brd, silver, PossibleMoves, Move),
+  askMovePlayer(Brd,silver, PossibleMoves, Move),
   updateBrd(Brd, Move, BrdRes),
   setBrd(BrdRes),
-  doRound(Brd, silver, K2).
+  showBrd(BrdRes),
+  computeDist(Move, Dist),
+  K2 is K - Dist,
+  doRound(BrdRes, silver, K2).
 
 
 
