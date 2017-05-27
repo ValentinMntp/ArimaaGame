@@ -54,7 +54,7 @@ pieceToColor(rG, gold).
 /*
 	pieceDenomination(PlayerSide, PieceCategory, PieceType)
 	------------------------------
-	Giver PlayerSide and PieceCategory, give the PieceType for printing on board.
+	Given PlayerSide and PieceCategory, give the PieceType for printing on board.
 */
 pieceDenomination(silver, elephant, eS).
 pieceDenomination(silver, camel, cS).
@@ -254,7 +254,8 @@ checkRabbitInGoal(Brd, gold):-
 	Check if Piece is frozen (can't be moved).
 */
 isFrozen((X,Y), Brd) :-
-	getNeighboursPieces((X,Y),Brd,L),
+	getNeighboursPieces((X,Y),Brd,SubL),
+	retire_elements(0,SubL,L),
 	cell((X,Y), Brd, (Piece,_)),
 	hasNoFriend(Piece,L),
 	hasStrongerOpponent(Piece,L), !.
@@ -309,7 +310,8 @@ hasWeakerOpponent(Piece, L) :-
 */
 toTrap((X,Y),Brd,Res):-
 	element(X,[3,6]), element(Y,[3,6]),
-	getNeighboursPieces((X,Y),Brd,L),
+	getNeighboursPieces((X,Y),Brd,SubL),
+	retire_elements(0,SubL,L),
 	cell((X,Y), Brd, (Piece,_)),
 	hasNoFriend(Piece,L),
 	setCell(Brd,(0,t),(X,Y),Res).
@@ -321,25 +323,62 @@ toTrap((X,Y),Brd,Res):-
 */
 
 canPullPush((X,Y),Brd) :-
-	getNeighboursPieces((X,Y),Brd,Neigh),
+	getNeighboursPieces((X,Y),Brd,SubNeigh),
+	retire_elements(0,SubNeigh,Neigh),
 	hasWeakerOpponent((X,Y),Neigh),
 	getNeighboursCells((X,Y),L),
-	canBePush((X,Y),L,Brd,Res)
-	.
+	canBePushPull((X,Y),L,Brd).
 
 	/*
-		canBePush(L,Brd,Res)
-		------------------------------
-		Check if a neighbour piece can be push by the piece you're moving.
-		Res contain the list of cell who can be push.
-	*/
+	canPullPush(piece,Brd)
+	------------------------------
+	Check if a piece can pull or push one of his neighbours
+*/
 
-	canBePush((X,Y),[],Brd,[]).
-	canBePush((X,Y),[T|Q],Brd,Res) :-
-		canBePush((X,Y),Q,Brd,Res),
-		cell((X,Y),Brd,(MyPiece,_)),
-		cell(T,Brd,(OpponentPiece,_)),
-		stronger(MyPiece, OpponentPiece),
-		getNeighboursPieces(T,Brd,L),
-		hasNoFriend(OpponentPiece,L).
-		% regarder si la case siuvante est libre avec wayIsFree
+canPullPush((X,Y),Brd) :-
+	getNeighboursPieces((X,Y),Brd,SubNeigh),
+	retire_elements(0,SubNeigh,Neigh),
+	hasWeakerOpponent((X,Y),Neigh),
+	getNeighboursCells((X,Y),L),
+	canBePushPull((X,Y),L,Brd).
+
+/*
+	canBePush(L,Brd,Res)
+	------------------------------
+	Check if a neighbour piece can be push by the piece you're moving.
+	Res contain the list of cell who can be push.
+*/
+
+canBePushPull((X,Y),[],Brd,[]) :- write("fin").
+canBePushPull((X,Y),[T|Q],Brd,Res) :-
+	write(T),
+	canBePushPull((X,Y),Q,Brd,Res),
+	write(T),
+	cell((X,Y),Brd,(MyPiece,_)),
+	write(MyPiece),
+	pieceDenomination(Color, MyAnimal, MyPiece),
+	write(MyAnimal),
+	cell(T,Brd,(OpponentPiece,_)),
+	write(OpponentPiece),
+	pieceDenomination(ColorOpponent, OpponentAnimal, OpponentPiece),
+	write(OpponentAnimal),
+	stronger(MyAnimal, OpponentAnimal),
+	getNeighboursPieces(T,Brd,SubL),
+	retire_elements(0,SubL,L),
+	write(L),
+	hasNoFriend(OpponentPiece,L),
+	write("after no friend"),
+	wayIsFree(T,Brd),
+	concat(T,SubRes,Res),
+	write("after wayIsFree").
+
+
+/*
+  wayIsFree((X,Y),(A,B),Brd)
+  ------------------------------
+	Check if piece (A,B) can be push by piece (X,Y)
+*/
+
+	wayIsFree((A,B),Brd):-
+		getNeighboursPieces((A,B),Brd,Res),
+		element(0,Res).

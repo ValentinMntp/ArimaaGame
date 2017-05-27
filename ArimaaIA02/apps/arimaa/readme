@@ -1,17 +1,15 @@
-board: array of 8 arrays of 8 pieces or nothing
+## Project Progress
 
-piece:
-    side:"gold" or "silver"
-    strength:4
-    type:"horse"
-
-game state:
-    turn: whose turn ("gold" or "silver")
-    array of captured piece: piece
-    remaining steps:
-
-move = get_move(board, state);
-
-move: 
-    steps: array of 4 move
-    move: from (row, col), piece, to (row, col)
+| Things done                                                     | Things to do                      |
+| -------------                                                   | -------------                     |
+| Board Placement Human (100%)                                    |  Push / Pull 60 %)                |
+| Board Initialization IA (100%)                                  | IA implementation (0 %)           |
+| Print Board (100%)                                              | Rabbit can't move backward (0%)   |
+| Choose 4 moves for Human (100%)                                 | Trap (90%)                        |
+| Game loop, end when winning conditions are complete (100%)      |                                   |
+| isFrozen (100%)                                                 |                                   |
+|                                                                 |                                   |
+|                                                                 |                                   |
+|                                                                 |                                   |
+|                                                                 |                                   |
+|                                                                 |                                   | 

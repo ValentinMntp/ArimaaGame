@@ -39,11 +39,11 @@ round(PlayerColor) :-
 	ennemyColor(PlayerColor, EnnemyColor),
 	round(EnnemyColor).
 
-doRound(Brd, _, 0) :- !.
+doRound(_,_, 0) :- !.
 doRound(Brd, gold, K) :-
   nl, write(K), write(" moves remaining."), nl,
   possibleMoves(K, Brd, gold, PossibleMoves),
-  askMovePlayer(Brd,gold, PossibleMoves, Move),
+  askMovePlayer(PossibleMoves, Move),
   updateBrd(Brd, Move, BrdRes),
   setBrd(BrdRes),
   showBrd(BrdRes),
@@ -54,7 +54,7 @@ doRound(Brd, gold, K) :-
 doRound(Brd, silver, K) :-
   nl, write(K), write(" moves remaining."), nl,
   possibleMoves(K, Brd, silver, PossibleMoves),
-  askMovePlayer(Brd,silver, PossibleMoves, Move),
+  askMovePlayer(PossibleMoves, Move),
   updateBrd(Brd, Move, BrdRes),
   setBrd(BrdRes),
   showBrd(BrdRes),
@@ -64,7 +64,7 @@ doRound(Brd, silver, K) :-
 
 
 
-askMovePlayer(Brd, PlayerSide, PossibleMoves, Move) :-
+askMovePlayer(PossibleMoves, Move) :-
   nl, writeSep(60), nl,
 	repeat,
   write("Choose the piece to move [Answer with format X,Y.]"), nl,
