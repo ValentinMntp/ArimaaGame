@@ -54,7 +54,7 @@ pieceToColor(rG, gold).
 /*
 	pieceDenomination(PlayerSide, PieceCategory, PieceType)
 	------------------------------
-	Giver PlayerSide and PieceCategory, give the PieceType for printing on board.
+	Given PlayerSide and PieceCategory, give the PieceType for printing on board.
 */
 pieceDenomination(silver, elephant, eS).
 pieceDenomination(silver, camel, cS).
@@ -324,7 +324,7 @@ canPullPush((X,Y),Brd) :-
 	getNeighboursPieces((X,Y),Brd,Neigh),
 	hasWeakerOpponent((X,Y),Neigh),
 	getNeighboursCells((X,Y),L),
-	canBePush((X,Y),L,Brd)
+	canBePushPull((X,Y),L,Brd)
 	.
 
 	/*
@@ -334,15 +334,27 @@ canPullPush((X,Y),Brd) :-
 		Res contain the list of cell who can be push.
 	*/
 
-	canBePush((X,Y),[],Brd,[]).
-	canBePush((X,Y),[T|Q],Brd) :-
-		canBePush((X,Y),Q,Brd),
+	canBePushPull((X,Y),[],Brd,[]) :- write("fin").
+	canBePushPull((X,Y),[T|Q],Brd,Res) :-
+		write(T),
+		canBePushPull((X,Y),Q,Brd,Res),
+		write(T),
 		cell((X,Y),Brd,(MyPiece,_)),
+		write(MyPiece),
+		pieceDenomination(Color, MyAnimal, MyPiece),
+		write(MyAnimal),
 		cell(T,Brd,(OpponentPiece,_)),
-		stronger(MyPiece, OpponentPiece),
+		write(OpponentPiece),
+		pieceDenomination(ColorOpponent, OpponentAnimal, OpponentPiece),
+		write(OpponentAnimal),
+		stronger(MyAnimal, OpponentAnimal),
 		getNeighboursPieces(T,Brd,L),
+		write(L),
 		hasNoFriend(OpponentPiece,L),
-		wayIsFree(T,Brd).
+		write("after no friend"),
+		wayIsFree(T,Brd),
+		concat(T,SubRes,Res),
+		write("after wayIsFree").
 
 
 	/*
