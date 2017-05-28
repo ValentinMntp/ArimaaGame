@@ -427,6 +427,36 @@ subFriendPiecesFilter(Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
 
 
 
+updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
+	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
+	cell((Xend, Yend), Brd, (_,CellType2)),
+	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
+	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
+	toTrap((3,6), SubBrdRes, BrdRes).
+
+updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
+	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
+	cell((Xend, Yend), Brd, (_,CellType2)),
+	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
+	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
+	toTrap((3,3), SubBrdRes, BrdRes).
+
+updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
+	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
+	cell((Xend, Yend), Brd, (_,CellType2)),
+	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
+	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
+	toTrap((6,3), SubBrdRes, BrdRes).
+
+updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
+	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
+	cell((Xend, Yend), Brd, (_,CellType2)),
+	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
+	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
+	toTrap((6,6), SubBrdRes, BrdRes).
+
+
+
 
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),

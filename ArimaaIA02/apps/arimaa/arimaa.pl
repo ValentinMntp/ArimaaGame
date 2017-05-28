@@ -33,7 +33,6 @@ round(PlayerColor) :-
 % otherwise, play round
 round(PlayerColor) :-
 	board(Brd),
-  showBrd(Brd),
 	write(" [Player "), write(PlayerColor), write("]"),
 	doRound(Brd, PlayerColor, 4),
 	ennemyColor(PlayerColor, EnnemyColor),
