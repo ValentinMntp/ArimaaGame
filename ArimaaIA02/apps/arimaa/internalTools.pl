@@ -301,8 +301,6 @@ hasWeakerOpponent(Piece, L) :-
 	element(X,L),!.
 
 
-
-
 /*
 	toTrap(piece,Brd,Res)
 	------------------------------
@@ -316,69 +314,16 @@ toTrap((X,Y),Brd,Res):-
 	hasNoFriend(Piece,L),
 	setCell(Brd,(0,t),(X,Y),Res).
 
-/*
-	canPullPush(piece,Brd)
-	------------------------------
-	Check if a piece can pull or push one of his neighbours
-*/
-
-canPullPush((X,Y),Brd) :-
-	getNeighboursPieces((X,Y),Brd,SubNeigh),
-	retire_elements(0,SubNeigh,Neigh),
-	hasWeakerOpponent((X,Y),Neigh),
-	getNeighboursCells((X,Y),L),
-	canBePushPull((X,Y),L,Brd).
-
-	/*
-	canPullPush(piece,Brd)
-	------------------------------
-	Check if a piece can pull or push one of his neighbours
-*/
-
-canPullPush((X,Y),Brd) :-
-	getNeighboursPieces((X,Y),Brd,SubNeigh),
-	retire_elements(0,SubNeigh,Neigh),
-	hasWeakerOpponent((X,Y),Neigh),
-	getNeighboursCells((X,Y),L),
-	canBePushPull((X,Y),L,Brd).
 
 /*
-	canBePush(L,Brd,Res)
+	canBePush((X,Y),L,Brd)
 	------------------------------
-	Check if a neighbour piece can be push by the piece you're moving.
-	Res contain the list of cell who can be push.
+	Check if the opponent piece you want to move can be push or pulled
 */
 
-canBePushPull((X,Y),[],Brd,[]) :- write("fin").
-canBePushPull((X,Y),[T|Q],Brd,Res) :-
-	write(T),
-	canBePushPull((X,Y),Q,Brd,Res),
-	write(T),
+canBePushPull((X,Y),Brd) :-
+	getNeighboursPieces((X,Y),Brd,L),
 	cell((X,Y),Brd,(MyPiece,_)),
-	write(MyPiece),
-	pieceDenomination(Color, MyAnimal, MyPiece),
-	write(MyAnimal),
-	cell(T,Brd,(OpponentPiece,_)),
-	write(OpponentPiece),
-	pieceDenomination(ColorOpponent, OpponentAnimal, OpponentPiece),
-	write(OpponentAnimal),
-	stronger(MyAnimal, OpponentAnimal),
-	getNeighboursPieces(T,Brd,SubL),
-	retire_elements(0,SubL,L),
-	write(L),
-	hasNoFriend(OpponentPiece,L),
-	write("after no friend"),
-	wayIsFree(T,Brd),
-	concat(T,SubRes,Res),
-	write("after wayIsFree").
-
-
-/*
-  wayIsFree((X,Y),(A,B),Brd)
-  ------------------------------
-	Check if piece (A,B) can be push by piece (X,Y)
-*/
-
-	wayIsFree((A,B),Brd):-
-		getNeighboursPieces((A,B),Brd,Res),
-		element(0,Res).
+	hasStrongerOpponent(MyPiece,L),
+	hasNoFriend(MyPiece,L),
+	element(0,L).
