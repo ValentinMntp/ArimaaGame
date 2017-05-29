@@ -255,7 +255,7 @@ checkRabbitInGoal(Brd, gold):-
 */
 isFrozen((X,Y), Brd) :-
 	getNeighboursPieces((X,Y),Brd,SubL),
-	retire_elements(0,SubL,L),
+	deleteElement(0,SubL,L),
 	cell((X,Y), Brd, (Piece,_)),
 	hasNoFriend(Piece,L),
 	hasStrongerOpponent(Piece,L), !.
@@ -309,7 +309,7 @@ hasWeakerOpponent(Piece, L) :-
 toTrap((X,Y),Brd,Res):-
 	element(X,[3,6]), element(Y,[3,6]),
 	getNeighboursPieces((X,Y),Brd,SubL),
-	retire_elements(0,SubL,L),
+	deleteElement(0,SubL,L),
 	cell((X,Y), Brd, (Piece,_)),
 	hasNoFriend(Piece,L),
 	setCell(Brd,(0,t),(X,Y),Res).
@@ -321,7 +321,7 @@ toTrap((X,Y),Brd,Res):-
 	Check if the opponent piece you want to move can be push or pulled
 */
 
-canBePushPull((X,Y),Brd) :-
+canBePush((X,Y),Brd) :-
 	getNeighboursPieces((X,Y),Brd,L),
 	cell((X,Y),Brd,(MyPiece,_)),
 	hasStrongerOpponent(MyPiece,L),

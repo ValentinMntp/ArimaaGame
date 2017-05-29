@@ -77,6 +77,7 @@ moveAskedPossible(StartPosition,EndPosition, PossibleMoves) :-
 	\+element([StartPosition, EndPosition], PossibleMoves), !,
 	writeln("Forbidden move."),
 	fail.
+
 moveAskedPossible(_,_,_).
 
 

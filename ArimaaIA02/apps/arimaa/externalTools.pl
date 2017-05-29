@@ -65,22 +65,22 @@ inverse([],[]).
 
 
 /*
-	retire_elements(X, L1, L2)
+	deleteElement(X, L1, L2)
 	------------------------------
 	Prédicat qui déplace dans L2 TOUTES les occurences de l'élément X dans L
 */
-retire_elements(_, [], []) :- !.
-retire_elements(X, [X|Q], Res) :- retire_elements(X, Q, Res), !.
-retire_elements(X, [T|Q], [T|Res]) :- retire_elements(X,Q,Res).
+deleteElement(_, [], []) :- !.
+deleteElement(X, [X|Q], Res) :- deleteElement(X, Q, Res), !.
+deleteElement(X, [T|Q], [T|Res]) :- deleteElement(X,Q,Res).
 
 /*
-	retire_doublons(L, Res)
+	deleteDoublons(L, Res)
 	------------------------------
 	Prédicat qui insère dans Res la liste L retirée de tous ses doublons
 	Res devient donc un 'ensemble'
 */
-retire_doublons([], []) :- !.
-retire_doublons([T|Q], [T|R]) :- retire_elements(T, Q, Res), retire_doublons(Res, R).
+deleteDoublons([], []) :- !.
+deleteDoublons([T|Q], [T|R]) :- deleteElement(T, Q, Res), deleteDoublons(Res, R).
 
 /*
 	difference(L1, L2, Res)

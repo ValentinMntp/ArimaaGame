@@ -270,7 +270,7 @@ movesFrom(K, Brd, (X,Y), MovesFrom) :-
 	K2 is K-1,
 	movesFrom(K2, Brd,(X,Y), MovesFrom2),
 	concat(MovesFrom1, MovesFrom2, MovesFrom3),
-	retire_doublons(MovesFrom3, MovesFrom).
+	deleteDoublons(MovesFrom3, MovesFrom).
 
 subMovesFrom(_,[],[]) :- !.
 subMovesFrom((X,Y), [Pos|RestPos], [[(X,Y), Pos]|RestMoves]) :-
@@ -332,7 +332,7 @@ friendPiecesFilter((X,Y), Brd, SubRes, Res) :-
 	cell((X,Y), Brd, (PieceType,_)), PieceType = rS,
 	subFriendPiecesFilter(Brd, SubRes, silver, Res).
 
-subFriendPiecesFilter(_, [], _, []) :- !.
+subFriendPiecesFilter(_,[], _, []) :- !.
 subFriendPiecesFilter(Brd, [(X,Y)|RestPos], gold, Res) :-
 	cell((X,Y), Brd, (Type,_)), Type = eG,
 	subFriendPiecesFilter(Brd, RestPos, gold, Res), !;
@@ -362,115 +362,142 @@ subFriendPiecesFilter(Brd, [(X,Y)|RestPos], silver, Res) :-
 subFriendPiecesFilter(Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
 	subFriendPiecesFilter(Brd, RestPos, PlayerType, Res).
 
-	/*
-		ennemyPiecesFilter((X,Y), Brd, SubRes, Res)
-		------------------------------
-		Unifie Res avec la liste des positions atteignables
-		depuis (X,Y), retirée des positions avec pièces amis de (X,Y)
-	*/
-	ennemyPiecesFilter((X,Y), Brd, SubRes, Res) :-
-		cell((X,Y), Brd, (PieceType,_)), PieceType = eG, !,
-		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
-		cell((X,Y), Brd, (PieceType,_)), PieceType = cG, !,
-		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
-		cell((X,Y), Brd, (PieceType,_)), PieceType = hG, !,
-		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
-		cell((X,Y), Brd, (PieceType,_)), PieceType = dG, !,
-		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
-		cell((X,Y), Brd, (PieceType,_)), PieceType = kG, !,
-		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
-		cell((X,Y), Brd, (PieceType,_)), PieceType = rG, !,
-		subEnnemyPiecesFilter(Brd, SubRes, gold, Res);
-		cell((X,Y), Brd, (PieceType, _)), PieceType = eS, !,
-		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
-		cell((X,Y), Brd, (PieceType, _)), PieceType = cS, !,
-		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
-		cell((X,Y), Brd, (PieceType, _)), PieceType = hS, !,
-		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
-		cell((X,Y), Brd, (PieceType, _)), PieceType = dS, !,
-		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
-		cell((X,Y), Brd, (PieceType, _)), PieceType = kS, !,
-		subEnnemyPiecesFilter(Brd, SubRes, silver, Res);
-		cell((X,Y), Brd, (PieceType,_)), PieceType = rS,
-		subEnnemyPiecesFilter(Brd, SubRes, silver, Res).
+/*
+	ennemyPiecesFilter((X,Y), Brd, SubRes, Res)
+	------------------------------
+	Unifie Res avec la liste des positions atteignables
+	depuis (X,Y), retirée des positions avec pièces amis de (X,Y)
+*/
+ennemyPiecesFilter( (X,Y), Brd, SubRes, Res) :-
+	cell((X,Y), Brd, (PieceType,_)), PieceType = eG, !,
+	subEnnemyPiecesFilter( Brd, SubRes, gold, Res);
+	cell((X,Y), Brd, (PieceType,_)), PieceType = cG, !,
+	subEnnemyPiecesFilter( Brd, SubRes, gold, Res);
+	cell((X,Y), Brd, (PieceType,_)), PieceType = hG, !,
+	subEnnemyPiecesFilter( Brd, SubRes, gold, Res);
+	cell((X,Y), Brd, (PieceType,_)), PieceType = dG, !,
+	subEnnemyPiecesFilter( Brd, SubRes, gold, Res);
+	cell((X,Y), Brd, (PieceType,_)), PieceType = kG, !,
+	subEnnemyPiecesFilter( Brd, SubRes, gold, Res);
+	cell((X,Y), Brd, (PieceType,_)), PieceType = rG, !,
+	subEnnemyPiecesFilter( Brd, SubRes, gold, Res);
+	cell((X,Y), Brd, (PieceType, _)), PieceType = eS, !,
+	subEnnemyPiecesFilter( Brd, SubRes, silver, Res);
+	cell((X,Y), Brd, (PieceType, _)), PieceType = cS, !,
+	subEnnemyPiecesFilter( Brd, SubRes, silver, Res);
+	cell((X,Y), Brd, (PieceType, _)), PieceType = hS, !,
+	subEnnemyPiecesFilter( Brd, SubRes, silver, Res);
+	cell((X,Y), Brd, (PieceType, _)), PieceType = dS, !,
+	subEnnemyPiecesFilter( Brd, SubRes, silver, Res);
+	cell((X,Y), Brd, (PieceType, _)), PieceType = kS, !,
+	subEnnemyPiecesFilter( Brd, SubRes, silver, Res);
+	cell((X,Y), Brd, (PieceType,_)), PieceType = rS,
+	subEnnemyPiecesFilter( Brd, SubRes, silver, Res).
 
-	subEnnemyPiecesFilter(_, [], _, []) :- !.
-	subEnnemyPiecesFilter(Brd, [(X,Y)|RestPos], gold, Res) :-
-		cell((X,Y), Brd, (Type,_)), Type = eS,
-		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = cS,
-		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = hS,
-		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = dS,
-		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = kS,
-		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = rS,
-		subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !.
-	subEnnemyPiecesFilter(Brd, [(X,Y)|RestPos], silver, Res) :-
-		cell((X,Y), Brd, (Type,_)), Type = eG,
-		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = cG,
-		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = hG,
-		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = dG,
-		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = kG,
-		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !;
-		cell((X,Y), Brd, (Type,_)), Type = rG,
-		subEnnemyPiecesFilter(Brd, RestPos, silver, Res), !.
-	subEnnemyPiecesFilter(Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
-		subEnnemyPiecesFilter(Brd, RestPos, PlayerType, Res).
+
+subEnnemyPiecesFilter(_, [], _, []) :- !.
+
+subEnnemyPiecesFilter(Brd, [(X,Y)|RestPos], gold, Res) :-
+	cell((X,Y), Brd, (Type,_)), Type = eS, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter(Brd, RestPos, gold, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = cS, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, gold, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = hS, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, gold, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = dS, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, gold, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = kS, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, gold, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = rS, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, gold, Res), !.
+subEnnemyPiecesFilter( Brd, [(X,Y)|RestPos], silver, Res) :-
+	cell((X,Y), Brd, (Type,_)), Type = eG, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, silver, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = cG, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, silver, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = hG, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, silver, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = dG, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, silver, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = kG, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, silver, Res), !;
+	cell((X,Y), Brd, (Type,_)), Type = rG, \+canBePush((X,Y), Brd),
+	subEnnemyPiecesFilter( Brd, RestPos, silver, Res), !.
+subEnnemyPiecesFilter( Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
+	subEnnemyPiecesFilter( Brd, RestPos, PlayerType, Res).
 
 
 
 
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
-	cell((Xend, Yend), Brd, (_,CellType2)),
+	cell((Xend, Yend), Brd, (0,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
 	toTrap((3,6), SubBrdRes, BrdRes).
 
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
-	cell((Xend, Yend), Brd, (_,CellType2)),
+	cell((Xend, Yend), Brd, (0,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
 	toTrap((3,3), SubBrdRes, BrdRes).
 
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
-	cell((Xend, Yend), Brd, (_,CellType2)),
+	cell((Xend, Yend), Brd, (0,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
 	toTrap((6,3), SubBrdRes, BrdRes).
 
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
-	cell((Xend, Yend), Brd, (_,CellType2)),
+	cell((Xend, Yend), Brd, (0,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
 	toTrap((6,6), SubBrdRes, BrdRes).
 
-
-
-
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
-	cell((Xend, Yend), Brd, (_,CellType2)),
+	cell((Xend, Yend), Brd, (0,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
 	toTrap((Xend, Yend), SubBrdRes, BrdRes).
 
 updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
-	cell((Xend, Yend), Brd, (_,CellType2)),
+	cell((Xend, Yend), Brd, (0,CellType2)),
 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
 	setCell(SubBrd, (PieceType, CellType2), (Xend, Yend), BrdRes).
 
+/* IN CASE THERE IS A PUSH */
+% TODO : Fix function below : loop for asking position
+
+% updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
+% 	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
+% 	cell((Xend, Yend), Brd, (PieceType2,CellType2)),
+% 	askPush((Xend,Yend), PushPosition),
+% 	cell((PushPosition), Brd, (0,CellType3)),
+% 	setCell(Brd, (0, CellType), (Xstart, Ystart), SubSubSubBrd),
+% 	setCell(SubSubSubBrd, (PieceType2, CellType3), (PushPosition), SubSubBrd),
+% 	setCell(SubSubBrd, (PieceType, CellType2), (Xend, Yend), SubBrdRes),
+% 	toTrap((PushPosition), SubBrdRes, BrdRes).
+
+updateBrd(Brd, [(Xstart, Ystart), (Xend, Yend)], BrdRes) :-
+	cell((Xstart, Ystart), Brd, (PieceType, CellType)),
+	cell((Xend, Yend), Brd, (PieceType2,CellType2)),
+	askPush((Xend,Yend), PushPosition),
+	cell((PushPosition), Brd, (0,CellType3)),
+	setCell(Brd, (0, CellType), (Xstart, Ystart), SubBrd),
+	setCell(SubBrd, (PieceType2, CellType3), (PushPosition), SubSubBrd),
+	setCell(SubSubBrd, (PieceType, CellType2), (Xend, Yend), BrdRes).
+
+askPush((Xend,Yend), PushPosition) :-
+	repeat,
+	write("[IT'S A PUSH !] Choose where to push the piece [Answer with format X,Y.]"), nl,
+  read(PushPosition), nl,
+	getNeighboursCells((Xend, Yend), L),
+	element((PushPosition),L).
 
 computeDist([(W,X),(Y,Z)], Dist) :-
 	W =< Y, X =< Z,
