@@ -162,12 +162,9 @@ getNeighboursCells((8,8),Res) :-
 /*
 	nextTo(C, PosX, PosY, Brd, Boolean)
 	------------------------------
-	Unifie le couple C avec des coordonnées
-	voisines de celles de la position
-	de coordonnées (PosX,PosY)
+	Unifies a C couple with (PosX, PosY) neighbour positions.
+	Check if neighbour cell is empty if bool is true.
 
-	- Vérifie si la cellule voisine est vide
-		si Boolean est à true
 */
   nextTo((Xstart, Ystart), Brd, (Xres,Yres), true) :-
   	Xres is Xstart - 1, Yres is Ystart,
@@ -196,8 +193,7 @@ getNeighboursCells((8,8),Res) :-
   /*
   neighbourPositions(Brd,(X,Y), Moves, CheckEmpty)
   	------------------------------
-  	Unifie Moves avec les différentes positions voisines
-  	atteignables par la position de coordonnnées (X,Y)
+  	Unifies Moves with various neighbour positions reachable by (X,Y) position.
   */
   neighbourPositions(Brd, (X,Y), Moves, CheckEmpty) :-
   	findall(C, nextTo((X,Y),Brd,C, CheckEmpty), Moves).
@@ -208,12 +204,12 @@ getNeighboursCells((8,8),Res) :-
     concat(History, Moves, NewHistory).
 
 /*
-	possibleMoves(Brd, PlayerSide, PossibleMoves)
+	possibleMoves(K,Brd, PlayerSide, PossibleMoves)
 	------------------------------
-	Unifie PossibleMoves avec la liste des moves possibles
-	par le joueur du camp PlayerSide à partir de Brd.
+	Unifies PossibleMoves with the list of possible moves which can be made by the PlayerSide player.
+	K is the number of move you still have to play.
 
-	Les moves sont de la forme :
+	Move take this form :
 		[(Xstart, Ystart), (Xend, Yend) ]
 */
 possibleMoves(K, Brd, PlayerSide, PossibleMoves) :-
@@ -227,7 +223,7 @@ bPossibleMoves(K,Brd, [RowX|RowRest], PlayerSide, (X,Y), PossibleMoves) :-
 	concat(SubRes1, SubRes2, PossibleMoves).
 
 subPossibleMoves(_,_,[],_,_,[]) :- !.
-% Si la pièce est de la couleur de PlayerSide, explorer ses mouvements
+% If the piece is a PlayerSide color, explore its possible moves
 subPossibleMoves(K,Brd, [(PieceType,_)|CellRest], PlayerSide, (X,Y), PossibleMoves) :-
 	pieceToColor(PieceType, PlayerSide),
 	\+isFrozen((X,Y),Brd),
@@ -236,18 +232,13 @@ subPossibleMoves(K,Brd, [(PieceType,_)|CellRest], PlayerSide, (X,Y), PossibleMov
 	subPossibleMoves(K, Brd, CellRest, PlayerSide, (X,SubY), PossibleMovesRest),
 	concat(PossibleMovesFirst, PossibleMovesRest, PossibleMoves).
 
-% Si la pièce n'est pas de la couleur de PlayerSide, case suivante
+% If the piece isn't a PlayerSide color, next cell.
 subPossibleMoves(K, Brd,[_|CellRest],PlayerSide,(X,Y), Res) :-
 	SubY is Y + 1,
 	subPossibleMoves(K, Brd, CellRest, PlayerSide, (X, SubY), Res), !.
 
 
-/*
-	neighboursOfList(Brd, ListeDeCouples, MovesTotaux)
-	------------------------------
-	Unifie MovesTotaux avec l'ensemble des positions atteignables
-	depuis les positions contenues dans ListeDeCouples
-*/
+
 neighbourPositionsFromList(_, [],[], _,History,History) :- !.
 neighbourPositionsFromList(Brd, [CoupleTete|QueueCouples], MovesTotaux, CheckEmpty, History, FinalHistory) :-
 	neighbourPositions(Brd, CoupleTete, MovesCouple, CheckEmpty, History, NewHistory),
@@ -256,11 +247,6 @@ neighbourPositionsFromList(Brd, [CoupleTete|QueueCouples], MovesTotaux, CheckEmp
 
 /*
 	movesFrom(K, Brd, C, MovesFrom)
-	------------------------------
-	Unifie MovesFrom avec la liste des mouvements
-	possibles depuis la position C, en faisant K déplacements
-	sur le plateau Brd.
-	Les mouvements sont de la forme (C, CoordonnesdArrivee)
 */
 movesFrom(0,_,_,_) :- !.
 
@@ -279,9 +265,7 @@ subMovesFrom((X,Y), [Pos|RestPos], [[(X,Y), Pos]|RestMoves]) :-
 /*
 	positionsFrom(K, Brd, Couple, Res)
 	------------------------------
-	Unifie Res avec la liste des positions atteignables
-	depuis la position de coordonnées Couple,
-	en réalisant exactement K mouvements.
+	Unifies Res with reachable position from Couple positon with exactly K moves.
 */
 positionsFrom(1, Brd, (X,Y), Res) :-
 	neighbourPositions(Brd, (X,Y), SubSubRes, false, [(X,Y)], _),
@@ -302,9 +286,6 @@ subPositionsFrom(K, Brd, (X,Y), Res, History, FinalHistory) :-
 
 /*
 	friendPiecesFilter((X,Y), Brd, SubRes, Res)
-	------------------------------
-	Unifie Res avec la liste des positions atteignables
-	depuis (X,Y), retirée des positions avec pièces amis de (X,Y)
 */
 friendPiecesFilter((X,Y), Brd, SubRes, Res) :-
 	cell((X,Y), Brd, (PieceType,_)), PieceType = eG, !,
@@ -364,9 +345,6 @@ subFriendPiecesFilter(Brd, [(X,Y)|RestPos], PlayerType, [(X,Y)|Res]) :-
 
 /*
 	ennemyPiecesFilter((X,Y), Brd, SubRes, Res)
-	------------------------------
-	Unifie Res avec la liste des positions atteignables
-	depuis (X,Y), retirée des positions avec pièces amis de (X,Y)
 */
 ennemyPiecesFilter( (X,Y), Brd, SubRes, Res) :-
 	cell((X,Y), Brd, (PieceType,_)), PieceType = eG, !,

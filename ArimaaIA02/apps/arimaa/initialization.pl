@@ -1,7 +1,7 @@
 /*
 	============================================================
 	============================================================
-	Positionnement des pions sur le plateau
+	Positioning pieces on the board
   						[[(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2),(0, s2)],
                [(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1),(0, s1)],
                [(0, e),(0, e),(0, t),(0, e),(0, e),(0, t),(0, e),(0, e)],
@@ -17,9 +17,9 @@
 /*
 	setBrd(Tab)
 	------------------------------
-	Modifie le prédicat dynamique du tableau
-	Teste d'abord le retract si il y existe déjà un fait
-	Sinon, il l'ajoute.
+	Board dynamic modification.
+	Test if a board already exist, if not it's added.
+
 */
 setBrd(Brd) :-
 	retractall(board(_)),
@@ -60,11 +60,10 @@ playerPositioning(Brd, silver, ResBrd) :-
 /*
 	humanPositioningMenu
 	------------------------------
-		Lance le positionnement humain du joueur
-		du camp PlayerSide
-	Unifie le résultat du positionnement avec ResBrd.
+		Start positioning Human Side
+		Unifies result with ResBrd.
 */
-/*humanPositioningMenu(Brd, [], _, Brd) :- showBrd(Brd).
+humanPositioningMenu(Brd, [], _, Brd) :- showBrd(Brd).
 humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	repeat, nl, writeSep(20), nl,
 	showBrd(Brd),
@@ -75,8 +74,10 @@ humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	cellType((X,Y), Brd, TypeCell),
 	setCell(Brd, (TypePion, TypeCell), CHOICE, SubBrd),
 	humanPositioningMenu(SubBrd, Q, PlayerSide, ResBrd).
-*/
 
+/* GenerateRandomtartPosition version */
+
+/*
 humanPositioningMenu(Brd, [],_, Brd) :-
 	nl, write("Human initialization"), showBrd(Brd), !.
 humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
@@ -86,14 +87,13 @@ humanPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 	cellType((X,Y), Brd, TypeCell),
 	setCell(Brd, (TypePion, TypeCell), (X,Y), SubBrd),
 	humanPositioningMenu(SubBrd, Q, PlayerSide, ResBrd).
-
+*/
 
 /*
 	iaPositioningMenu
 	------------------------------
-	Lance le positionnement IA du joueur
-	du camp PlayerSide
-	Unifie le résultat du positionnement avec ResBrd.
+	Launch automatic positionning phase for the IA  (or player 2)
+	Unifies result with ResBrd.
 */
 iaPositioningMenu(Brd, [],_, Brd) :-
 	nl, write("AI initialization"), showBrd(Brd), !.
@@ -109,8 +109,7 @@ iaPositioningMenu(Brd, [T|Q], PlayerSide, ResBrd) :-
 /*
 	generateRandomStartPosition
 	------------------------------
-	Génére des coordonnées aléatoires pour
-	le placement des pions pour l'IA
+	generate random position for IA pieces.
 */
 generateRandomStartPositionSilver(X,Y) :- random(1,3,X), random(1,9,Y).
 generateRandomStartPositionGold(X,Y) :- random(7,9,X), random(1,9,Y).
