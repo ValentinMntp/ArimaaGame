@@ -1,2 +1,0 @@
-pkill -f swipl
-swipl run.pl
